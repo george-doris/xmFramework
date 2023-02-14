@@ -1,37 +1,37 @@
 # 魔兽争霸3 Lua框架
 
-#### 介绍
+## 介绍
 xmFramework 快速开发魔兽争霸3框架
 
-#### 软件架构
-软件架构说明
+## 编辑器安装
+下载编辑器CocosForWin-v3.10文件
+然后安装,点击自定义安装
+
+然后点击立即安装
 
 
-#### 安装教程
+## 安装插件
+下载插件.zip并解压,将XMUI路径拷贝到刚才文档路径:文档\Cocos\CocosStudio2\Addins下面
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+## 编辑器设置
+打开编辑器
 
 
-#### 特技
+点击项目->项目设置
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+数据格式选择 war XM框架UI
+
+编辑好界面后点击导出按钮,会在res目录生成资源文件
+
+使用blplab将导出的图片全部转成BLP格式
+
+删除PNG图片
+
+将导出的文件拷贝到地图的map里面
+
+## 框架使用
+将"需要拷贝到编辑器的文件(官方编辑器)"拷贝到魔兽地图编辑器路径里
+
+安装vscode和lua插件
+
+用vscode打开框架路径,按F5调试

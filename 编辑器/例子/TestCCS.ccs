@@ -1,0 +1,35 @@
+<Solution>
+  <PropertyGroup Name="TestCCS" Version="3.10.0.0" Type="CocosStudio" />
+  <SolutionFolder>
+    <Group ctype="ResourceGroup">
+      <RootFolder Name=".">
+        <Folder Name="fonts">
+          <TTF Name="FZZDHJW.TTF" />
+        </Folder>
+        <Folder Name="images">
+          <Image Name="animationbuttonnormal.png" />
+          <Image Name="animationbuttonpressed.png" />
+          <Image Name="check_box_active.png" />
+          <Image Name="check_box_active_disable.png" />
+          <Image Name="check_box_active_press.png" />
+          <Image Name="check_box_normal.png" />
+          <Image Name="check_box_normal_disable.png" />
+          <Image Name="check_box_normal_press.png" />
+          <Image Name="slidbar.png" />
+          <Image Name="slider_bar_active_9patch.png" />
+          <Image Name="slider_bar_active_9patch2.png" />
+          <Image Name="sliderballnormal.png" />
+          <Image Name="sliderProgress.png" />
+          <Image Name="sliderThumb.png" />
+          <Image Name="sliderTrack.png" />
+          <Image Name="background.png" />
+          <Image Name="Slider_Back.png" />
+          <Image Name="SliderNode_Disable.png" />
+          <Image Name="SliderNode_Normal.png" />
+          <Image Name="SliderNode_Press.png" />
+        </Folder>
+        <Project Name="MainScene.csd" Type="Scene" />
+      </RootFolder>
+    </Group>
+  </SolutionFolder>
+</Solution>

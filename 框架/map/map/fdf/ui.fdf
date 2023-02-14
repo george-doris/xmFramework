@@ -1,0 +1,20 @@
+Frame "FRAME" "TEST" {
+	SetAllPoints,
+	LayerStyle "NOSHADING|IGNORETRACKEVENTS|SETSVIEWPORT|SCROLL|NODEPTHSET|NODEPTHTEST|3DWINDOW|SHADING|OUTLINE",
+}
+
+Frame "FRAME" "CLIP_FRAME_TEMPLATE" {
+	SetAllPoints,
+	LayerStyle "SCROLL|IGNORETRACKEVENTS",
+}
+
+Frame "FRAME" "FRAME_TEMPLATE" {
+	SetAllPoints,
+	LayerStyle "IGNORETRACKEVENTS",
+}
+
+Frame "EDITBOX" "EDITBOX_TEMPLATE" {
+    TabFocusDefault,
+    EditBorderSize 0.000,
+    EditCursorColor 1.0 1.0 1.0,
+}

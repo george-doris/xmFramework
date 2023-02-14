@@ -1,0 +1,23 @@
+{
+    "files.exclude": {
+        "tools/": true,
+        "map.w3x": true,
+        "map/": true,
+        "pngTools/": true,
+    },
+    "Lua.workspace.library": [
+        "${3rd}/Jass/library"
+    ],
+    "Lua.workspace.checkThirdParty": false,
+    "Lua.runtime.version": "Lua 5.3",
+    "Lua.diagnostics.disable": [
+        "param-type-mismatch",
+        "cast-local-type",
+        "need-check-nil",
+        "assign-type-mismatch"
+    ],
+    "Lua.diagnostics.globals": [
+        "cc",
+        "cmap"
+    ]
+}

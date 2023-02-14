@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "configurations": [{
+            "name": "Launch",
+            "type": "lua",
+            "request": "attach",
+            "stopOnEntry": false,
+            "address": "127.0.0.1:4278",
+            "preLaunchTask": "运行",
+            "sourceMaps": [
+                [
+                    "lua\\",
+                ]
+            ]
+
+        },
+        {
+            "name": "Attach",
+            "type": "lua",
+            "request": "attach",
+            "stopOnEntry": false,
+            "address": "127.0.0.1:4278",
+            "sourceMaps": [
+                [
+                    "lua\\",
+                ]
+            ]
+
+        },
+        {
+            "name": "Test",
+            "type": "lua",
+            "luaArch": "x86",
+            "request": "launch",
+            "stopOnEntry": false,
+            "program": "${workspaceFolder}/lua/test.lua",
+            "path": "${workspaceRoot}/lua/?.lua",
+        },
+    ]
+}

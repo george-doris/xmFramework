@@ -1,0 +1,15 @@
+[CmdMove]
+Art=CommandMove
+Buttonpos=0,-11
+[CmdAttack]
+Art=CommandAttack
+Buttonpos=0,0
+[CmdPatrol]
+Art=CommandPatrol
+Buttonpos=0,-11
+[CmdStop]
+Art=CommandStop
+Buttonpos=0,-11
+[CmdHoldPos]
+Art=CommandHoldPosition
+Buttonpos=0,-11

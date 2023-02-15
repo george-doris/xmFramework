@@ -24,8 +24,8 @@ function UI.Backdrop:ctor(name, parent)
 end
 
 
----设置材质
----@param texture string 材质
+---设置图片
+---@param texture string 图片
 ---@param flag UI.TextFlag|nil 
 function UI.Backdrop:setTexture(texture, flag)
     if self._texture == texture and self._textureFlag == flag then
@@ -43,7 +43,7 @@ function UI.Backdrop:setTexture(texture, flag)
     end)
 end
 
----获得材质
+---获得图片
 ---@return string
 function UI.Backdrop:getTexture()
     return self._texture

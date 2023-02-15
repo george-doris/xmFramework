@@ -189,7 +189,7 @@ end
 
 ---值改变回调
 ---@param fn function 2个参数:第一个位触发的Slider,第二个位值
-function UI.Slider:setOnValueCallback(fn)
+function UI.Slider:setCallback_OnValue(fn)
     self._onValueCallback = fn
 end
 

@@ -22,6 +22,7 @@ function UI.PageView:ctor(name, parent,isClip)
 
     self._cur_index = 1
     self._index = 1
+    self._onpage_event = nil
 end
 
 -- ---添加页
@@ -126,10 +127,18 @@ function UI.PageView:scrollToPage(index)
         return
     end
     self._index = index
+    if self._onpage_event then
+        self._onpage_event(index)
+    end
     _updateInnerPos(self)
 end
 
 ---移动到页
 function UI.PageView:getCurrentPageIndex()
     return self._index
+end
+
+---设置页变化回调
+function UI.PageView:setCallback_OnPage(fn)
+    self._onpage_event = fn
 end

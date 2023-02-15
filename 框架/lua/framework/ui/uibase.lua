@@ -47,14 +47,14 @@ function UI.UIBase:ctor(name, parent, frameid)
     parent:_addChild(self)
 end
 
----返回窗口
+---返回war3ui句柄
 ---@return framehandle
 function UI.UIBase:getFrameID()
     return self._frameid
 end
 
 ---获得名字
----@return string @名字
+---@return string 名字
 function UI.UIBase:getName() return self._name end
 
 ---移除子窗口
@@ -101,7 +101,7 @@ function UI.UIBase:setParent(parent)
     _updatePos(self)
 end
 
----获得父类组件
+---获得父类UI
 ---@return UI.UIBase @父控件
 function UI.UIBase:getParent() return self._parent end
 
@@ -143,6 +143,7 @@ function UI.UIBase:getWidth()
 end
 
 ---获得高度
+---@return number
 function UI.UIBase:getHeight()
     return self._height
 end
@@ -152,6 +153,13 @@ end
 function UI.UIBase:setTag(tag)
     self._tag = tag
 end
+
+---获得tag
+---@return integer 标志
+function UI.UIBase:getTag()
+    return self._tag
+end
+
 
 ---设置透明度
 ---@param alpha integer 透明度0-255
@@ -420,9 +428,20 @@ function UI.UIBase:SetCallback_MouseClick(fn)
 end
 
 ---查找子窗口
----@param name string 子窗口名称
+---多级查找,参数为table类型
+---@param name string|table 子窗口名称
 ---@return UI.UIBase
 function UI.UIBase:findChild(name)
+    if type(name)=="table" then
+        local ui = self
+        for index, value in ipairs(name) do
+            ui = ui:findChild(value)
+            if ui==nil then
+                return nil
+            end
+        end
+        return ui
+    end
     return self._children[name]
 end
 

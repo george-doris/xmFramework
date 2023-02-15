@@ -12,6 +12,9 @@ function UI.LoadScene(filename)
     f:close()
     local data = Serialize.unSerialize(buffer)
     UIParser.LoadChildren(data.children,GameUI)
+    if data.userData  then
+        require(data.userData)
+    end
 end
 
 ---获得鼠标在窗口位置

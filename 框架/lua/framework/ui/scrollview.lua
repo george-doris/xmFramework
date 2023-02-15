@@ -135,7 +135,7 @@ function UI.ScrollView:setVerticalScrollbar(scrollbar)
     if scrollbar then
         self._verticalScrollbar = scrollbar
         scrollbar:setValue(0)
-        scrollbar:setOnValueCallback(function (s,value)
+        scrollbar:setCallback_OnValue(function (s,value)
             _updateInnerPos(self)
         end)
     end
@@ -151,7 +151,7 @@ function UI.ScrollView:setHorizontalScrollbar(scrollbar)
     if scrollbar then
         self._horizontalScrollbar = scrollbar
         scrollbar:setValue(0)
-        scrollbar:setOnValueCallback(function (s,value)
+        scrollbar:setCallback_OnValue(function (s,value)
             _updateInnerPos(self)
         end)
     end

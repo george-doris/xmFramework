@@ -107,8 +107,8 @@ function UI.Button:ctor(name, parent)
     end)
 end
 
----设置禁用图片
----@param texture string 材质
+---设置缺省状态图片
+---@param texture string 图片
 function UI.Button:setNormalImage(texture)
     if self._normalImage == texture then
         return
@@ -117,14 +117,14 @@ function UI.Button:setNormalImage(texture)
     _updateState(self)
 end
 
----获得禁用图片
+---获得缺省状态图片
 ---@return string
 function UI.Button:getNormalImage()
     return self._normalImage
 end
 
----设置按下图片
----@param texture string 材质
+---设置按下状态图片
+---@param texture string 图片
 function UI.Button:setPressedImage(texture)
     if self._pressedImage == texture then
         return
@@ -133,14 +133,14 @@ function UI.Button:setPressedImage(texture)
     _updateState(self)
 end
 
----获得按下图片
+---获得按下状态图片
 ---@return string
 function UI.Button:getPressedImage()
     return self._pressedImage
 end
 
----设置禁用图片
----@param texture string 材质
+---设置禁用状态图片
+---@param texture string 图片
 function UI.Button:setDisableImage(texture)
     if self._disableImage == texture then
         return
@@ -149,7 +149,7 @@ function UI.Button:setDisableImage(texture)
     _updateState(self)
 end
 
----获得禁用图片
+---获得禁用状态图片
 ---@return string
 function UI.Button:getDisableImage()
     return self._disableImage

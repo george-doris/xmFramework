@@ -112,7 +112,7 @@ local function _updateInnerPos(self)
         if self._updateInnerPos then
             self._updateInnerPos = false
 
-            local x = -(self._index-1)*self._width
+            local x = -(self._index-1)*self._width*self:getWorldScale()
             self._inner:setPosition(x,0)
         end
     end)

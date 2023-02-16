@@ -1,5 +1,5 @@
 require "framework.functions"
-local Map = require "lua.framework.container.map"
+local Map = require "framework.container.map"
 
 ---@class EventGroup
 ---@field _new function

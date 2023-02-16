@@ -2,19 +2,30 @@ local japi = require "framework.dzapi"
 local Serialize = require "framework.serialize"
 local GameUI = require "framework.ui.game_ui"
 local UIParser = require "framework.ui.uiparser"
+local UIActionParser = require "framework.ui.uiactionparser"
 local UpdateCallback = require "framework.update_callback"
+require "framework.ui.layer"
 
-
-
-function UI.LoadScene(filename)
+function UI.LoadScene(filename, parent)
     local f = io.open(filename, "r")
     local buffer = f:read("a")
     f:close()
     local data = Serialize.unSerialize(buffer)
-    UIParser.LoadChildren(data.children,GameUI)
-    if data.userData  then
-        require(data.userData)
+
+    local ui = UI.Layer.new(data.name,parent or GameUI)
+    UIParser.LoadChildren(data.children,ui)
+    ui:setAnchorType(UI.AnchorType.LEFT_BOTTOM)
+    ui:setPosition(0,0)
+    ui:setSize(0.8,0.6)
+
+    local actionData = UI.Action.ActionDataCache:Load(filename,data)
+    ui._actionData = actionData
+    -- UIActionParser.Load(ui,actionData)
+    if data.userData then
+        local fn = require(data.userData)
+        fn(ui)
     end
+    return ui
 end
 
 ---获得鼠标在窗口位置
@@ -43,8 +54,8 @@ end
 ---更新列表
 local _updateList = {}
 function UI.AddUpdate(fn)
-   fn() --调试用
-   --table.insert(_updateList,fn)
+   --fn() --调试用
+   table.insert(_updateList,fn)
 end
 
 UpdateCallback.AddUpdateCallback("UIUpdate",function (delayTime)

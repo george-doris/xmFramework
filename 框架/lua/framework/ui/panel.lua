@@ -3,7 +3,7 @@ local japi = require "framework.dzapi"
 
 ---@class UI.Panel:UI.Frame
 ---面板
-UI.Panel = Class("Panel", UI.Frame)
+UI.Panel = Class("Panel", UI.UIBase)
 
 ---创建新实例
 ---@param name string 名字
@@ -29,15 +29,17 @@ function UI.Panel:ctor(name, parent,isClip)
     end
     UI.UIBase.ctor(self,name, parent, frameid)
 
-    self._background = UI.Backdrop.new("_BACKGROUND",self)
-    UI.Inner(self._background)
-    self._background:setAnchorType(UI.AnchorType.CENTET)
-    self._background._parentAnchorType = UI.AnchorType.CENTET
-    self._background:setPosition(0,0)
-    self._background:setVisible(false)
-
     self._textureSize = {width=0,height=0}
     self._scale9 = false
+
+    local background = UI.Backdrop.new("_BACKGROUND",self)
+    UI.Inner(background)
+    background:setAnchorType(UI.AnchorType.CENTET)
+    background._parentAnchorType = UI.AnchorType.CENTET
+    background:setPosition(0,0)
+    background:setVisible(false)
+    self._background = background
+
     self:SetCallback_MouseLeftDown(_mouseDown)
 end
 
@@ -61,6 +63,17 @@ function UI.Panel:setSize(width,height)
             if event then japi.DzFrameSetSize(event.frameid, self._width, self._height) end
         end
     end)
+end
+
+---设置缩放
+---@param scale number 0-1
+function UI.Panel:setScale(scale)
+    if NumberEqual(self._scale,scale) then
+        return
+    end
+    UI.UIBase.setScale(self,scale)
+    self._background._scale = 0.0000001
+    self._background:setScale(1)
 end
 
 local function _updateBackground(self)
@@ -124,5 +137,5 @@ function UI.Panel:destroy()
     if self._background then
         self._background:destroy()
     end
-    UI.Frame.destroy(self)
+    UI.UIBase.destroy(self)
 end

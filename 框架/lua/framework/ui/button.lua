@@ -183,6 +183,16 @@ function UI.Button:setSize(width,height)
     self._textUI:setSize(width,height)
 end
 
+---设置缩放
+---@param scale number 0-1
+function UI.Button:setScale(scale)
+    if NumberEqual(self._scale,scale) then
+        return
+    end
+    UI.Backdrop.setScale(self,scale)
+    self._textUI._scale = 0.0000001
+    self._textUI:setScale(1)
+end
 
 ---设置字体
 ---@param path string 字体文件
@@ -217,4 +227,10 @@ end
 ---鼠标单击消息回调
 function UI.Button:SetCallback_MouseClick(fn)
     self._mouse_click_event = fn
+end
+
+---释放
+function UI.Button:destroy()
+    self._textUI:destroy()
+    UI.Backdrop.destroy(self)
 end

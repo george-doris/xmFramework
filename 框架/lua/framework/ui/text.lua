@@ -31,10 +31,10 @@ function UI.Text:ctor(name, parent)
     self._shadowColor = {r=0,g=0,b=0,a=0}
     self._font_scale = 1
 
-    japi.DzFrameSetEnable(frameid, false)
-    WindowCallback.AddResizeCallback(tostring(self),function (delayTime)
-        self:UpdateSize(delayTime)
-    end)
+    -- japi.DzFrameSetEnable(frameid, false)
+    -- WindowCallback.AddResizeCallback(tostring(self),function (delayTime)
+    --     self:UpdateSize(delayTime)
+    -- end)
 end
 
 local function _updateShadowText(self)
@@ -73,12 +73,39 @@ end
 function UI.Text:getText() return self._text end
 
 
+local function _updateFont(self)
+    self._updateFont = true
+    UI.AddUpdate(function ()
+        if self._updateFont then
+            self._updateFont = false
+
+            local width = japi.DzGetClientWidth()/800
+            local height = japi.DzGetClientHeight()/800
+        
+            local scale = 1
+            if width<height then
+                scale = width/800
+            else
+                scale = height/600
+            end
+            local font_scale = (72/96/1.6)*scale*self._font.size
+            self._font_scale = font_scale
+            
+            japi.DzFrameSetFont(self:getFrameID(), self._font.path, self._font_scale*self:getWorldScale(), self._font.style)
+            if self._shadow==nil then return end
+            japi.DzFrameSetFont(self._shadow, self._font.path, self._font_scale*self:getWorldScale(), 0)
+        end
+    end)
+end
+
+
 ---设置大小
 ---@param width number 宽度
 ---@param height number 高度
 function UI.Text:setSize(width,height)
     if self._width == width and self._height == height then return end
     UI.UIBase.setSize(self,width,height)
+    _updateFont(self)
     if self._shadow==nil then return end
 
     self._updateShadowSize = true
@@ -114,12 +141,13 @@ function UI.Text:setScale(scale)
         return
     end
     UI.UIBase.setScale(self,scale)
+    _updateFont(self)
     if self._shadow==nil then return end
     self._updateShadowScale = true
     UI.AddUpdate(function ()
         if self._updateShadowScale then
             self._updateShadowScale = false
-            japi.DzFrameSetScale(self._shadow, self._scale)
+            japi.DzFrameSetScale(self._shadow, self:getWorldScale())
         end
     end)
 end
@@ -202,31 +230,6 @@ end
 -- ---@return string
 -- function UI.Text:getTextColor() return self._textColor end
 
-local function _updateFont(self)
-    self._updateFont = true
-    UI.AddUpdate(function ()
-        if self._updateFont then
-            self._updateFont = false
-
-            local width = japi.DzGetClientWidth()/800
-            local height = japi.DzGetClientHeight()/800
-        
-            local scale = 1
-            if width<height then
-                scale = width/800
-            else
-                scale = height/600
-            end
-            local font_scale = (72/96/2)*scale
-            self._font_scale = font_scale
-            
-            japi.DzFrameSetFont(self:getFrameID(), self._font.path, self._font.size*self._font_scale, self._font.style)
-            if self._shadow==nil then return end
-            japi.DzFrameSetFont(self._shadow, self._font.path, self._font.size*self._font_scale, 0)
-        end
-    end)
-end
-
 
 local function _updateShadow(self)
     local shadow = self._shadow
@@ -238,10 +241,10 @@ local function _updateShadow(self)
             self._shadow = shadow
         end
 
-        japi.DzFrameSetEnable(self._shadow, false) 
+        japi.DzFrameSetEnable(self._shadow, false)
         japi.DzFrameSetSize(self._shadow, self._width, self._height)
         japi.DzFrameSetAlpha(self._shadow, self._alpha)
-        japi.DzFrameSetScale(self._shadow, self._scale)
+        japi.DzFrameSetScale(self._shadow, self.getWorldScale())
         japi.DzFrameShow(self._shadow, self._visible)
         local offset = self:getParentOffset()
         japi.DzFrameSetPoint(self._shadow, self._anchorType, self:getParentFrameID(),
@@ -483,7 +486,7 @@ end
 ---更新
 function UI.Text:UpdateSize(delayTime)
     local width = japi.DzGetClientWidth()/800
-    local height = japi.DzGetClientHeight()/600
+    local height = japi.DzGetClientHeight()/800
 
     local scale = 1
     if width<height then
@@ -491,10 +494,10 @@ function UI.Text:UpdateSize(delayTime)
     else
         scale = height/600
     end
-    local font_scale = (72/96/2)*scale
+    local font_scale = (72/96/1.4)*scale*self._font.size
     self._font_scale = font_scale
     
-    japi.DzFrameSetFont(self:getFrameID(), self._font.path, self._font.size*self._font_scale, self._font.style)
+    japi.DzFrameSetFont(self:getFrameID(), self._font.path, self._font_scale*self:getWorldScale(), self._font.style)
     if self._shadow==nil then return end
-    japi.DzFrameSetFont(self._shadow, self._font.path, self._font.size*self._font_scale, 0)
+    japi.DzFrameSetFont(self._shadow, self._font.path, self._font_scale*self:getWorldScale(), 0)
 end

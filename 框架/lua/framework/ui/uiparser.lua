@@ -1,3 +1,6 @@
+local Serialize = require "framework.serialize"
+local UIActionParser = require "framework.ui.uiactionparser"
+require "framework.ui.action.action_data_cache"
 require "framework.ui.backdrop"
 require "framework.ui.imageview"
 require "framework.ui.button"
@@ -14,9 +17,12 @@ require "framework.ui.checkbox"
 local UIParser = {}
 
 ---设置基础属性
+---@param ui UI.UIBase
+---@param root table
 local function setBaseProperty(ui,root)
     ui:setSize(root.width,root.height)
     ui:setTag(root.tag)
+    ui:setActionTag(root.actionTag)
     if root.alpha<255 then
         ui:setAlpha(root.alpha)
     end
@@ -239,6 +245,28 @@ local function ListViewObjectData(root,parent)
     return ui
 end
 
+local function ProjectNodeObjectData(root,parent)
+    local f = io.open(root.file, "r")
+    local buffer = f:read("a")
+    f:close()
+    local data = Serialize.unSerialize(buffer)
+
+    local ui = UI.Layer.new(root.name,parent)
+    UIParser.LoadChildren(data.children,ui)
+    setBaseProperty(ui,root)
+    
+    local actionData = UI.Action.ActionDataCache:Load(root.file,data)
+    ui._actionData = actionData
+    --UIActionParser.Load(ui,actionData)
+
+    if data.userData  then
+        local fn = require(data.userData)
+        fn(ui)
+    end
+
+    return ui
+end
+
 local _factory = {
     SpriteObjectData = SpriteObjectData,
     ImageViewObjectData = ImageViewObjectData,
@@ -252,6 +280,7 @@ local _factory = {
     ScrollViewObjectData = ScrollViewObjectData,
     PageViewObjectData = PageViewObjectData,
     ListViewObjectData = ListViewObjectData,
+    ProjectNodeObjectData = ProjectNodeObjectData,
 }
 
 ---查找解析工厂

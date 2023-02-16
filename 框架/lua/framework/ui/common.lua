@@ -2,9 +2,15 @@ local japi = require "framework.dzapi"
 local UTF8 = require "framework.utf8"
 require "framework.functions"
 
+
+
 ---UI总类
 ---@class UI
 UI = {}
+
+---动画类
+---@class UI.Action
+UI.Action = {}
 
 ---@class UI.AnchorType
 UI.AnchorType = {

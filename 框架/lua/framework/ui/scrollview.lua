@@ -20,6 +20,11 @@ end
 function UI.ScrollView:ctor(name, parent,isClip)
     UI.Panel.ctor(self,name,parent,isClip)
 
+    self._verticalScrollbar = nil
+    self._horizontalScrollbar = nil
+
+    self._innerSize = {width=0,height=0}
+
     local inner = UI.Panel.new("_INNER",self,false)
     UI.Inner(inner)
     inner._parentAnchorType = UI.AnchorType.LEFT_TOP
@@ -27,10 +32,6 @@ function UI.ScrollView:ctor(name, parent,isClip)
     inner:setPosition(0,0)
     inner:setSize(0.0000001,0.0000001)
     self._inner = inner
-    self._verticalScrollbar = nil
-    self._horizontalScrollbar = nil
-
-    self._innerSize = {width=0,height=0}
 end
 
 function UI.ScrollView:setInnerSize(width,height)
@@ -114,11 +115,11 @@ local function _updateInnerPos(self)
 
             if self._verticalScrollbar then
                 local height = self._innerSize.height-self._height
-                pos.y = self._verticalScrollbar:getValue()*height
+                pos.y = self._verticalScrollbar:getValue()*height*self:getWorldScale()
             end
             if self._horizontalScrollbar then
                 local width = self._innerSize.width-self._width
-                pos.x = -self._horizontalScrollbar:getValue()*width
+                pos.x = -self._horizontalScrollbar:getValue()*width*self:getWorldScale()
             end
             self._inner:setPosition(pos.x,pos.y)
         end
@@ -155,4 +156,10 @@ function UI.ScrollView:setHorizontalScrollbar(scrollbar)
             _updateInnerPos(self)
         end)
     end
+end
+
+---释放
+function UI.ScrollView:destroy()
+    self._inner:destroy()
+    UI.Panel.destroy(self)
 end

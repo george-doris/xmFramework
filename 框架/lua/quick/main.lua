@@ -1,4 +1,4 @@
-require "framework.functions"
+require "framework.init"
 local CJ = require "jass.common"
 local development = require "quick.development"
 --判断是否是开发模式

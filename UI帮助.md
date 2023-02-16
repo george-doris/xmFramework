@@ -9,6 +9,15 @@
     6. 交互性其实是enable(启用\禁用)
     7. 不支持改变颜色,在游戏中不会有效果
 
+## 动画支持
+    1. 坐标动画 position
+    2. 缩放动画 scale
+    3. 透明度动画 alpha
+    4. 显示/隐藏动画 visible
+    5. 序列帧动画 texture
+
+    当前动画只支持线性运动(linear)
+
 ## 鼠标事件(所有UI支持下列鼠标事件)
 必须开启交互性才能激活鼠标事件
 
@@ -52,8 +61,10 @@ function UI.UIBase:SetCallback_MouseClick(fn)
 ## 场景
     相当于游戏中的GameUI
 
-    打开编辑器![image](帮助/8.jpg)
-    这用户数据填写脚本名,在LoadScene完成后自动运行脚本文件
+    在用户数据填写脚本名,在LoadScene完成后自动运行脚本文件
+
+## 层 UI.Layer
+    支持动画控制,可以用play(动画名,循环)播放动画,stop()停止动画
 
 ## 精灵 UI.Backdrop
     这个用来做帧动画
@@ -77,6 +88,9 @@ function UI.UIBase:SetCallback_MouseClick(fn)
 ## 进度条 UI.LoadingBar
     
 ## 滑动条 UI.Slider
+    支持0和90度旋转
+    竖向混动条已[Vertical]开头命名,在回调方法里填要控制的panel名称
+    竖向混动条已[Horizontal]开头命名,在回调方法里填要控制的panel名称
 
 ## 输入框 UI.TextField
     不能放到面板里,不然不接受事件

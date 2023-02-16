@@ -31,6 +31,7 @@ function UI.UIBase:ctor(name, parent, frameid)
     self._width = 0
     self._height = 0
     self._tag = 0
+    self._actionTag = nil
     self._anchorType = UI.AnchorType.LEFT_BOTTOM
     self._parentAnchorType = UI.AnchorType.LEFT_BOTTOM
     self._scale = 1
@@ -42,6 +43,7 @@ function UI.UIBase:ctor(name, parent, frameid)
     self._parent = parent
     self._children = {}
     self._event = nil
+    self._worldScale = nil
     UI.register(self,frameid)
 
     parent:_addChild(self)
@@ -74,8 +76,8 @@ local function _updatePos(self)
         if self._updatePos then
             self._updatePos = false
             japi.DzFrameClearAllPoints(self:getFrameID())
-            local x = self._x
-            local y = self._y
+            local x = self._x/self._scale
+            local y = self._y/self._scale
             --裁剪窗口特殊需求,y不能是0,不然不显示
             if x==0 then
                 x = 0.0000001
@@ -85,7 +87,7 @@ local function _updatePos(self)
             end
             local offset = self:getParentOffset()
             japi.DzFrameSetPoint(self:getFrameID(), self._anchorType, self:getParentFrameID(),
-                self._parentAnchorType, self._x+offset.x, y+offset.y)
+                self._parentAnchorType, x+offset.x, y+offset.y)
         end
     end)
 end
@@ -160,6 +162,12 @@ function UI.UIBase:getTag()
     return self._tag
 end
 
+---设置tag
+---@param tag integer 标志
+function UI.UIBase:setActionTag(tag)
+    self._actionTag = tag
+end
+
 
 ---设置透明度
 ---@param alpha integer 透明度0-255
@@ -184,13 +192,23 @@ function UI.UIBase:setScale(scale)
         return
     end
     self._scale = scale
+    self._worldScale = nil
     self._updateScale = true
     UI.AddUpdate(function ()
         if self._updateScale then
             self._updateScale = false
-            japi.DzFrameSetScale(self:getFrameID(), self._scale)
+            japi.DzFrameSetScale(self:getFrameID(), self:getWorldScale())
+            --设置事件窗口大小
+            local event = self._event
+            if event then japi.DzFrameSetScale(event.frameid, self:getWorldScale()) end
         end
     end)
+    local scale
+    for index, value in ipairs(self._children) do
+        scale = value:getScale()
+        value._scale = 0.0000001
+        value:setScale(scale)
+    end
 end
 
 ---获得缩放比
@@ -201,13 +219,16 @@ end
 
 ---获得全局缩放比
 function UI.UIBase:getWorldScale()
-    local scale = 1
-    local node = self
-    while node do
-        scale = scale*node._scale
-        node = node:getParent()
+    if self._worldScale==nil then
+        local scale = self._scale
+        local node = self:getParent()
+        while node do
+            scale = scale*node._scale
+            node = node:getParent()
+        end
+        self._worldScale = scale
     end
-    return scale
+    return self._worldScale
 end
 
 ---启用\禁用
@@ -430,7 +451,7 @@ end
 ---查找子窗口
 ---多级查找,参数为table类型
 ---@param name string|table 子窗口名称
----@return UI.UIBase
+---@return UI.UIBase|nil
 function UI.UIBase:findChild(name)
     if type(name)=="table" then
         local ui = self
@@ -458,9 +479,11 @@ end
 
 ---移除所有子窗口
 function UI.UIBase:removeAllChild()
-    local children = self._children
-    self._children = {}
-    for index, child in SafePairs(children) do child:destroy() end
+    local children = self._children[1]
+    while children do
+        children:destroy()
+        children = self._children[1]
+    end
 end
 
 ---释放所有监听事件

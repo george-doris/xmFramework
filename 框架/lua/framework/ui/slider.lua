@@ -68,10 +68,19 @@ end
 function UI.Slider:ctor(name, parent)
     UI.Backdrop.ctor(self, name, parent)
     
-    self._progressBar = UI.LoadingBar.new("_PROGRESSBAR",self)
-    UI.Inner(self._progressBar)
-    self._progressBar:setAnchorType(UI.AnchorType.LEFT_BOTTOM)
-    self._progressBar:setPosition(0,0)
+    self._sliderState = 0
+    self._old_value = 0
+    self._mouse_pos = nil
+    self._value = 0
+    self._factor = 0
+    self._direction = UI.Direction.HORIZONTAL
+    self._onValueCallback = nil
+
+    local progressBar = UI.LoadingBar.new("_PROGRESSBAR",self)
+    UI.Inner(progressBar)
+    progressBar:setAnchorType(UI.AnchorType.LEFT_BOTTOM)
+    progressBar:setPosition(0,0)
+    self._progressBar = progressBar
 
     local slider = UI.Button.new("_CHUNK",self)
     UI.Inner(slider)
@@ -81,15 +90,8 @@ function UI.Slider:ctor(name, parent)
     slider:setEnable(true)
     slider._parentAnchorType = UI.AnchorType.CENTET
     slider:setAnchorType(UI.AnchorType.CENTET)
-
-    self._sliderState = 0
-    self._old_value = 0
-    self._mouse_pos = nil
-    self._value = 0
-    self._factor = 0
-    self._direction = UI.Direction.HORIZONTAL
     self._slider = slider
-    self._onValueCallback = nil
+
     self:setValue(0)
     --_calc_slider_region(self)
 end
@@ -141,6 +143,20 @@ function UI.Slider:setSize(width,height)
     self._height = height
 
     _updateSize(self)
+end
+
+---设置缩放
+---@param scale number 0-1
+function UI.Slider:setScale(scale)
+    if NumberEqual(self._scale,scale) then
+        return
+    end
+    UI.Backdrop.setScale(self,scale)
+
+    self._progressBar._scale = 0.0000001
+    self._progressBar:setScale(1)
+    self._slider._scale = 0.0000001
+    self._slider:setScale(1)
 end
 
 ---设置值
@@ -205,4 +221,5 @@ end
 function UI.Slider:destroy()
     self._slider:destroy()
     self._progressBar:destroy()
+    UI.Backdrop.destroy(self)
 end

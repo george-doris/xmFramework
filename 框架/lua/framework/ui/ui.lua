@@ -3,6 +3,8 @@ local Serialize = require "framework.serialize"
 local GameUI = require "framework.ui.game_ui"
 local UIParser = require "framework.ui.uiparser"
 local UpdateCallback = require "framework.update_callback"
+local TimerAsyn = require "framework.timer_asyn"
+local Dev = require "framework.dev"
 require "framework.ui.layer"
 
 function UI.LoadScene(filename, parent)
@@ -57,11 +59,12 @@ function UI.AddUpdate(fn)
    table.insert(_updateList,fn)
 end
 
-UpdateCallback.AddUpdateCallback("UIUpdate",function (delayTime)
+--内置-异步定时器
+TimerAsyn.TimerStart(TimerAsyn.CreateTimer(),0.02,true,function ()
     local updateList = _updateList
     _updateList = {}
     for index, value in ipairs(updateList) do
-        value(delayTime)
+        value()
     end
 end)
 

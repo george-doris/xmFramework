@@ -259,6 +259,16 @@ function UI.CheckBox:SetCallback_MouseClick(fn)
     self._mouse_click_event = fn
 end
 
+---鼠标进入消息回调
+function UI.CheckBox:SetCallback_MouseEnter(fn)
+    self._mouse_enter_event = fn
+end
+
+---鼠标离开消息回调
+function UI.CheckBox:SetCallback_MouseLeave(fn)
+    self._mouse_leave_event = fn
+end
+
 ---释放
 function UI.CheckBox:destroy()
     self._node:destroy()

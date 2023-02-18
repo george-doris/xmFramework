@@ -57,7 +57,7 @@ function UI.Layer:destroy()
     local actionTimeline = self._actionTimeline
     self._actionTimeline = nil
     for index, value in SafePairs(actionTimeline) do
-        UI.ActionManager:removeAction(actionTimeline)
+        UI.ActionManager:removeAction(value)
     end
     UI.Frame.destroy(self)
 end

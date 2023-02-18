@@ -3,9 +3,10 @@
 ---@class Map
 local Map = {}
 
-local cmap = require "cmap"
-if cmap then
+local Dev = require "framework.dev"
+if Dev.HasXMLib() then
     --内置
+    local cmap = require "cmap"
     Map.new = cmap.new
 else
     --lua实现

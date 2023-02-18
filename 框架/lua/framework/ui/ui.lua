@@ -2,7 +2,6 @@ local japi = require "framework.dzapi"
 local Serialize = require "framework.serialize"
 local GameUI = require "framework.ui.game_ui"
 local UIParser = require "framework.ui.uiparser"
-local UIActionParser = require "framework.ui.uiactionparser"
 local UpdateCallback = require "framework.update_callback"
 require "framework.ui.layer"
 

@@ -37,11 +37,11 @@ function UI.UIBase:SetCallback_MouseLeftDown(fn)
 ~~~lua
 function UI.UIBase:SetCallback_MouseLeftUp(fn)
 ~~~
-5. 鼠标左键按下消息回调
+5. 鼠标右键按下消息回调
 ~~~lua
 function UI.UIBase:SetCallback_MouseRightDown(fn)
 ~~~
-6. 鼠标左键抬起消息回调
+6. 鼠标右键抬起消息回调
 ~~~lua
 function UI.UIBase:SetCallback_MouseRightUp(fn)
 ~~~
@@ -89,8 +89,8 @@ function UI.UIBase:SetCallback_MouseClick(fn)
     
 ## 滑动条 UI.Slider
     支持0和90度旋转
-    竖向混动条已[Vertical]开头命名,在回调方法里填要控制的panel名称
-    竖向混动条已[Horizontal]开头命名,在回调方法里填要控制的panel名称
+    面板自动绑定竖向混动条以[Vertical]开头命名,在回调方法里填要控制的panel名称
+    面板自动绑定竖向混动条以[Horizontal]开头命名,在回调方法里填要控制的panel名称
 
 ## 输入框 UI.TextField
     不能放到面板里,不然不接受事件

@@ -4,6 +4,7 @@ local GameUI = require "framework.ui.game_ui"
 local UIParser = require "framework.ui.uiparser"
 local UpdateCallback = require "framework.update_callback"
 local TimerAsyn = require "framework.timer_asyn"
+local Timer = require "framework.timer"
 local Dev = require "framework.dev"
 require "framework.ui.layer"
 
@@ -59,13 +60,24 @@ function UI.AddUpdate(fn)
    table.insert(_updateList,fn)
 end
 
---内置-异步定时器
-TimerAsyn.TimerStart(TimerAsyn.CreateTimer(),0.02,true,function ()
-    local updateList = _updateList
-    _updateList = {}
-    for index, value in ipairs(updateList) do
-        value()
-    end
-end)
+if Dev.HasXMLib() then
+    --内置-异步定时器
+    TimerAsyn.TimerStart(TimerAsyn.CreateTimer(),0.02,true,function ()
+        local updateList = _updateList
+        _updateList = {}
+        for index, value in ipairs(updateList) do
+            value()
+        end
+    end)
+else
+    --没有内置只能这样了
+    Timer.TimerStart(TimerAsyn.CreateTimer(),0.02,true,function ()
+        local updateList = _updateList
+        _updateList = {}
+        for index, value in ipairs(updateList) do
+            value()
+        end
+    end)
+end
 
 return UI

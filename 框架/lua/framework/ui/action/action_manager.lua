@@ -1,5 +1,6 @@
 local UpdateCallback = require "framework.update_callback"
 local Time = require "framework.time"
+local Timer = require "framework.timer"
 local TimerAsyn = require "framework.timer_asyn"
 local Dev = require "framework.dev"
 
@@ -26,15 +27,28 @@ function ActionManager:ctor()
 
     --内置-异步定时器
     local _last_time = Time.getTime()
-    TimerAsyn.TimerStart(TimerAsyn.CreateTimer(),0.02,true,function ()
-        local t = Time.getTime()
-        if t==_last_time then
-            return
-        end
-        local delayTime = t-_last_time
-        _last_time = t
-        _step(self,delayTime)
-    end)
+    if Dev.HasXMLib() then
+        TimerAsyn.TimerStart(TimerAsyn.CreateTimer(),0.02,true,function ()
+            local t = Time.getTime()
+            if t==_last_time then
+                return
+            end
+            local delayTime = t-_last_time
+            _last_time = t
+            _step(self,delayTime)
+        end)
+    else   
+         --没有内置只能这样了
+        Timer.TimerStart(TimerAsyn.CreateTimer(),0.02,true,function ()
+            local t = Time.getTime()
+            if t==_last_time then
+                return
+            end
+            local delayTime = t-_last_time
+            _last_time = t
+            _step(self,delayTime)
+        end)
+    end
 end
 
 

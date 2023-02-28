@@ -239,9 +239,9 @@ local function _updateShadow(self)
             japi.DzFrameSetPriority(shadow, 1)
             japi.DzFrameSetPriority(self:getFrameID(), 2)
             self._shadow = shadow
+            japi.DzFrameSetEnable(self._shadow, false)
         end
 
-        japi.DzFrameSetEnable(self._shadow, false)
         japi.DzFrameSetSize(self._shadow, self._width, self._height)
         japi.DzFrameSetAlpha(self._shadow, self._alpha)
         japi.DzFrameSetScale(self._shadow, self.getWorldScale())

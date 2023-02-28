@@ -1,6 +1,24 @@
-输入路径：G:/map/test/map_dev/map
-输出路径：G:/map/test/map_dev/map.w3x
-输入格式：Lni
-输出模式：obj
-结果：0 个错误，0 条警告
-用时：20.238 秒
+输入路径：G:/xmFramework/framework/map.w3x
+输出路径：G:/xmFramework/framework/map
+输入格式：Mpq
+输出模式：lni
+结果：0 个错误，1 条警告
+用时：1.040 秒
+==========================
+警告 (1)
+==========================
+没有转换触发器 - 请设置YDWE关联地图
+stack traceback:
+	[C]: in function 'error'
+	.\core\slk/frontend_trg.lua:86: in method 'frontend_trg'
+	.\core\slk/frontend_wtg.lua:448: in method 'frontend_wtg'
+	.\core\slk/backend.lua:56: in function <.\core\slk/backend.lua:55>
+	[C]: in function 'xpcall'
+	.\core\slk/backend.lua:55: in upvalue 'convert_wtg'
+	.\core\slk/backend.lua:392: in method 'backend'
+	.\backend\convert.lua:141: in function 'backend.convert'
+	.\backend\cli\lni.lua:4: in function 'backend.cli.lni'
+	.\backend\init.lua:12: in main chunk
+	[C]: in function 'require'
+	G:\xmFramework\framework\tools\w3x2lni\script\main.lua:2: in main chunk
+	[C]: in ?

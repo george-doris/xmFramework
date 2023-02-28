@@ -1,0 +1,7 @@
+G:\xmFramework\framework\map\resource\art\HB03B.blp
+G:\xmFramework\framework\map\resource\[BOSS](3).mdx
+G:\xmFramework\framework\map\resource\[Hero]diaochan.mdx
+G:\xmFramework\framework\map\resource\war3mapMap.blp
+G:\xmFramework\framework\map\resource\war3mapImported\HB03B.blp
+G:\xmFramework\framework\map\resource\war3mapImported\HB03A.blp
+C:\Users\BBOY\Desktop\新建文件夹\新建文件夹\ttt\resource\[BOSS](3).mdx

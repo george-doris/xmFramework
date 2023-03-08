@@ -8,13 +8,13 @@ local Timer = require "framework.timer"
 local Dev = require "framework.dev"
 require "framework.ui.layer"
 
-function UI.LoadScene(filename, parent)
+function UI.LoadScene(filename, parent, name)
     local f = io.open(filename, "r")
     local buffer = f:read("a")
     f:close()
     local data = Serialize.unSerialize(buffer)
 
-    local ui = UI.Layer.new(data.name,parent or GameUI)
+    local ui = UI.Layer.new(name or data.name,parent or GameUI)
     UIParser.LoadChildren(data.children,ui)
     ui:setAnchorType(UI.AnchorType.LEFT_BOTTOM)
     ui:setPosition(0,0)

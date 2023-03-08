@@ -11,7 +11,7 @@ require "framework.ui.action.frame_event"
 local UIActionParser = {}
 
 ---设置位置动画
-local function Position(root,node)
+local function Position(root, node)
     local timeline = UI.Action.Timeline.new()
 
     for _, value in ipairs(root.frames) do
@@ -28,7 +28,7 @@ local function Position(root,node)
 end
 
 ---设置缩放动画
-local function Scale(root,node)
+local function Scale(root, node)
     local timeline = UI.Action.Timeline.new()
 
     for _, value in ipairs(root.frames) do
@@ -45,7 +45,7 @@ local function Scale(root,node)
 end
 
 ---设置材质动画
-local function FileData(root,node)
+local function FileData(root, node)
     local timeline = UI.Action.Timeline.new()
 
     for _, value in ipairs(root.frames) do
@@ -60,7 +60,7 @@ local function FileData(root,node)
 end
 
 ---设置显示动画
-local function VisibleForFrame(root,node)
+local function VisibleForFrame(root, node)
     local timeline = UI.Action.Timeline.new()
 
     for _, value in ipairs(root.frames) do
@@ -75,7 +75,7 @@ local function VisibleForFrame(root,node)
 end
 
 ---设置显示动画
-local function Alpha(root,node)
+local function Alpha(root, node)
     local timeline = UI.Action.Timeline.new()
 
     for _, value in ipairs(root.frames) do
@@ -90,7 +90,7 @@ local function Alpha(root,node)
 end
 
 ---设置帧事件
-local function FrameEvent(root,node)
+local function FrameEvent(root, node)
     local timeline = UI.Action.Timeline.new()
 
     for _, value in ipairs(root.frames) do
@@ -116,13 +116,13 @@ local _factory = {
 ---comment
 ---@param ui UI.UIBase
 ---@param actionTag string
-local function _findNode(ui,actionTag)
+local function _findNode(ui, actionTag)
     local node
-    if ui._actionTag==actionTag then
+    if ui._actionTag == actionTag then
         return ui
     end
     for index, value in ipairs(ui._children) do
-        node = _findNode(value,actionTag)
+        node = _findNode(value, actionTag)
         if node then
             return node
         end
@@ -132,7 +132,7 @@ end
 ---comment
 ---@param ui UI.Layer
 ---@param root table
-function UIActionParser.Load(ui,root)
+function UIActionParser.Load(ui, root)
     local nodeIndexs = {}
     local animation = root.animation
 
@@ -144,20 +144,23 @@ function UIActionParser.Load(ui,root)
     if animation.timeline then
         for index, value in ipairs(animation.timeline) do
             local node = nodeIndexs[value.actionTag]
-            if node==nil then
-                node = _findNode(ui,value.actionTag)
+            if node == nil then
+                node = _findNode(ui, value.actionTag)
             end
             if node then
                 local fn = _factory[value.property]
                 ---@type UI.Action.Timeline
-                local timeline = fn(value,node)
+                local timeline = fn(value, node)
                 actionTimeline:addTimeline(timeline)
             end
         end
     end
 
-    for index, value in SafePairs(root.animationList) do
-        actionTimeline:addAnimationInfo({_name=value.name,_startIndex=value.startIndex,_endIndex=value.endIndex})
+    if root.animationList then
+        for index, value in SafePairs(root.animationList) do
+            actionTimeline:addAnimationInfo({ _name = value.name, _startIndex = value.startIndex,
+                _endIndex = value.endIndex })
+        end
     end
     return actionTimeline
 end

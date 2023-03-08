@@ -122,8 +122,14 @@ function UI.LoadingBar:setTexture(texture)
     end)
 end
 
+---设置材质
+---@return string 材质
+function UI.LoadingBar:getTexture()
+    return self._progressBar:getTexture()
+end
+
 ---设置值
----@param value number 0-100
+---@param value number 0-1
 function UI.LoadingBar:setValue(value)
     if self._value ==value then
         return

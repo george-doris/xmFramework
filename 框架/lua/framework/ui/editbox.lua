@@ -129,7 +129,7 @@ function UI.EditBox:setTextAlignment(align)
     end)
 end
 
----设置对齐方式
+---设置满长度
 ---@param maxLength integer 默认为50
 function UI.EditBox:setMaxLength(maxLength)
     if self._maxLength == maxLength then

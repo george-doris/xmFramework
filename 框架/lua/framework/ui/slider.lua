@@ -179,16 +179,29 @@ function UI.Slider:getValue()
     return self._value
 end
 
----设置材质
+---设置进度条材质
 ---@param texture string 材质
 function UI.Slider:setProgressBarImage(texture)
     self._progressBar:setTexture(texture)
 end
 
+---获得进度条材质
+---@return string 材质
+function UI.Slider:getProgressBarImage()
+    return self._progressBar:getTexture()
+end
+
+
 ---按钮禁用图片
 ---@param texture string 材质
 function UI.Slider:setButtonDisabled(texture)
     self._slider:setDisableImage(texture)
+end
+
+---按钮禁用图片
+---@return string 材质
+function UI.Slider:getButtonDisabled()
+    return self._slider:getDisableImage()
 end
 
 ---按钮图片
@@ -197,14 +210,26 @@ function UI.Slider:setButtonNormal(texture)
     self._slider:setNormalImage(texture)
 end
 
+---按钮图片
+---@return string 材质
+function UI.Slider:getButtonNormal()
+    return self._slider:getNormalImage()
+end
+
 ---按钮按下图片
 ---@param texture string 材质
 function UI.Slider:setButtonPressed(texture)
     self._slider:setPressedImage(texture)
 end
 
+---按钮按下图片
+---@return string 材质
+function UI.Slider:getButtonPressed()
+    return self._slider:getPressedImage()
+end
+
 ---值改变回调
----@param fn function 2个参数:第一个位触发的Slider,第二个位值
+---@param fn function|nil 2个参数:第一个位触发的Slider,第二个位值
 function UI.Slider:setCallback_OnValue(fn)
     self._onValueCallback = fn
 end

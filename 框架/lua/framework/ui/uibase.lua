@@ -185,6 +185,12 @@ function UI.UIBase:setAlpha(alpha)
     end)
 end
 
+---获得透明度
+---@return integer 透明度0-255
+function UI.UIBase:getAlpha()
+    return self._alpha
+end
+
 ---设置缩放
 ---@param scale number 0-1
 function UI.UIBase:setScale(scale)

@@ -36,6 +36,14 @@ function UI.Layer:playAction(name,loop,fn)
     ---@type UI.Action.ActionTimeline
     local actionTimeline = self._actionTimeline[name]
     if actionTimeline==nil then
+        local animationList = self._actionData.animationList
+        if animationList==nil then
+            return
+        end
+        local c = animationList[name]
+        if c==nil then
+            return
+        end
         actionTimeline = UIActionParser.Load(self,self._actionData)
         self._actionTimeline[name] = actionTimeline
         UI.ActionManager:addAction(actionTimeline)

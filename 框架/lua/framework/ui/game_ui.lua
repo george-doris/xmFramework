@@ -29,6 +29,8 @@ function GameUI:ctor()
     self._parent = nil
     self._children = {}
     self._event = nil
+
+    UI.register(self,self._frameid)
 end
 
 UI.GameUI = GameUI.new()

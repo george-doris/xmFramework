@@ -27,7 +27,7 @@ function Timeline:addFrame(frame)
     table.insert(self._frames,frame)
 end
 
-local function _binarySearchKeyFrame(self,frameIndex)
+local function _binarySearchKeyFrame(self,frameIndex,actionTimeline)
     local from
     local to
 
@@ -47,10 +47,10 @@ local function _binarySearchKeyFrame(self,frameIndex)
             to = frames[1]
             from = to
             self._currentKeyFrameIndex = 0
-            self._betweenDuration = frames[1]:getFrameIndex()+1
+            self._betweenDuration = frames[1]:getFrameIndex()
             break
         elseif frameIndex >= frames[length]:getFrameIndex() then
-            self._fromIndex = length
+            self._fromIndex = length-1
             self._toIndex = 0
             
             to = frames[length] 
@@ -104,7 +104,7 @@ local function _binarySearchKeyFrame(self,frameIndex)
 
     if needEnterFrame or self._currentKeyFrame ~= from then
         self._currentKeyFrame = from
-        self._currentKeyFrame:onEnter(to, frameIndex)
+        self._currentKeyFrame:onEnter(to, frameIndex, actionTimeline)
     end
 end
 
@@ -115,16 +115,16 @@ local function _apply(self,frameIndex)
     end
 end
 
-function Timeline:gotoFrame(frameIndex)
+function Timeline:gotoFrame(frameIndex,actionTimeline)
     if #self._frames == 0 then
         return
     end
 
-    _binarySearchKeyFrame(self,frameIndex)
+    _binarySearchKeyFrame(self,frameIndex,actionTimeline)
     _apply(self,frameIndex)
 end
 
-local function _updateCurrentKeyFrame(self,frameIndex)
+local function _updateCurrentKeyFrame(self,frameIndex,actionTimeline)
     --! If play to current frame's front or back, then find current frame again
     if (frameIndex < self._currentKeyFrameIndex or frameIndex >= self._currentKeyFrameIndex + self._betweenDuration) then
         local from
@@ -166,7 +166,7 @@ local function _updateCurrentKeyFrame(self,frameIndex)
                     break
                 end
                 if(from:isEnterWhenPassed()) then
-                    from:onEnter(to, from:getFrameIndex())
+                    from:onEnter(to, from:getFrameIndex(), actionTimeline)
                 end
                 break
             end
@@ -180,18 +180,22 @@ local function _updateCurrentKeyFrame(self,frameIndex)
         end
 
         self._currentKeyFrame = from
-        self. _currentKeyFrame:onEnter(to, frameIndex)
+        self. _currentKeyFrame:onEnter(to, frameIndex, actionTimeline)
         
     end
 end
 
-function Timeline:stepToFrame(frameIndex)
+function Timeline:stepToFrame(frameIndex,actionTimeline)
     if #self._frames == 0 then
         return
     end
 
-    _updateCurrentKeyFrame(self,frameIndex)
+    _updateCurrentKeyFrame(self,frameIndex,actionTimeline)
     _apply(self,frameIndex)
+end
+
+function Timeline:destroy()
+    self._frames = nil
 end
 
 UI.Action.Timeline = Timeline

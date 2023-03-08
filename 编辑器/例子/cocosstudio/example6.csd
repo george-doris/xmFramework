@@ -2,10 +2,10 @@
   <PropertyGroup Name="example6" Type="Layer" ID="2d845f60-a245-4d39-bda5-1942030aa594" Version="3.10.0.0" />
   <Content ctype="GameProjectContent">
     <Content>
-      <Animation Duration="50" Speed="0.3333" ActivedAnimationName="animation1">
+      <Animation Duration="50" Speed="0.3333">
         <Timeline ActionTag="-1754873178" Property="Position">
-          <PointFrame FrameIndex="0" X="104.0107" Y="246.2386">
-            <EasingData Type="1" />
+          <PointFrame FrameIndex="0" X="106.5000" Y="246.2386">
+            <EasingData Type="0" />
           </PointFrame>
           <PointFrame FrameIndex="50" X="371.6297" Y="252.8877">
             <EasingData Type="0" />
@@ -71,6 +71,11 @@
           <IntFrame FrameIndex="50" Value="255">
             <EasingData Type="0" />
           </IntFrame>
+        </Timeline>
+        <Timeline ActionTag="-1754873178" Property="FrameEvent">
+          <EventFrame FrameIndex="0" Tween="False" Value="" />
+          <EventFrame FrameIndex="45" Tween="False" Value="" />
+          <EventFrame FrameIndex="50" Tween="False" Value="test.example6_end" />
         </Timeline>
         <Timeline ActionTag="-444664359" Property="Position">
           <PointFrame FrameIndex="0" X="106.4991" Y="97.7652">
@@ -155,13 +160,13 @@
       <ObjectData Name="Layer" UserData="test.example6" Tag="88" ctype="GameLayerObjectData">
         <Size X="500.0000" Y="357.0000" />
         <Children>
-          <AbstractNodeData Name="Sprite_1_0" ActionTag="-1754873178" VisibleForFrame="False" Tag="89" IconVisible="False" LeftMargin="87.0107" RightMargin="378.9893" TopMargin="97.7614" BottomMargin="233.2386" ctype="SpriteObjectData">
+          <AbstractNodeData Name="Sprite_1_0" ActionTag="-1754873178" VisibleForFrame="False" Tag="89" IconVisible="False" LeftMargin="89.5000" RightMargin="376.5000" TopMargin="97.7614" BottomMargin="233.2386" ctype="SpriteObjectData">
             <Size X="34.0000" Y="26.0000" />
             <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
-            <Position X="104.0107" Y="246.2386" />
+            <Position X="106.5000" Y="246.2386" />
             <Scale ScaleX="2.0000" ScaleY="2.0000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <PrePosition X="0.2080" Y="0.6897" />
+            <PrePosition X="0.2130" Y="0.6897" />
             <PreSize X="0.0680" Y="0.0728" />
             <FileData Type="Normal" Path="images/slider_bar_active_9patch.png" Plist="" />
             <BlendFunc Src="1" Dst="771" />

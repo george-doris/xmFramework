@@ -35,10 +35,10 @@ local function _mouseMove(self)
         local slider = self._slider
         if self._direction==UI.Direction.HORIZONTAL then
             local x = pos.x - self._mouse_pos.x
-            value = self._old_value + x*slider._factor/scale
+            value = self._old_value + x*slider._factor/scale/0.8
         else
-            local y = pos.y - self._mouse_pos.y
-            value = self._old_value + y*slider._factor/scale
+            local y = self._mouse_pos.y - pos.y
+            value = self._old_value + y*slider._factor/scale/0.6
         end
         if self._value ==value then
             return

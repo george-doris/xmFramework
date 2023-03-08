@@ -61,6 +61,7 @@ end
 ---移除动画
 function ActionManager:removeAction(action)
     self._actions[action] = nil
+    action:destroy()
 end
 
 function ActionManager:removeAllAction()

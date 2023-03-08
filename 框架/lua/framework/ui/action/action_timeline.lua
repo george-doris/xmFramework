@@ -18,10 +18,17 @@ function ActionTimeline:ctor()
     self._frameEndCallFuncs = {}
     self._lastFrameListener = nil
 
+    self._node = nil
     self._duration = 0
     self._timeSpeed = 1
     self._timelineMap = {}
     self._animationInfos = {}
+end
+
+---设置Node
+---@param node UI.UIBase 总帧数
+function ActionTimeline:setNode(node)
+    self._node = node
 end
 
 ---设置持续时间
@@ -74,7 +81,7 @@ local function gotoFrame(self,frameIndex)
 
     ---@param value UI.Action.Timeline
     for index, value in ipairs(self._timelineMap) do
-        value:gotoFrame(frameIndex)
+        value:gotoFrame(frameIndex,self)
     end
 end
 
@@ -111,26 +118,45 @@ function ActionTimeline:gotoFrameAndPlay(startIndex, endIndex, currentFrameIndex
     self._startFrame = startIndex
     self._endFrame = endIndex or self._duration
     self._currentFrame = currentFrameIndex or startIndex
-    self._loop = loop or true
+    if loop==nil then
+        self._loop = false
+    else
+        self._loop = loop
+    end
     self._time = self._currentFrame*self._frameInternal
 
     self:resume()
     gotoFrame(self,self._currentFrame)
 end
 
+--设置动画结束回调
+function ActionTimeline:setLastFrameCallFunc(fn)
+    self._lastFrameListener = fn
+end
+
+--设置帧结束事件
+function ActionTimeline:setFrameEndCallFunc(frameIndex,fn)
+    self._frameEndCallFuncs[frameIndex] = fn
+end
+
+--设置帧结束事件
+function ActionTimeline:clearFrameEndCallFuncs(frameIndex,fn)
+    self._frameEndCallFuncs = {}
+end
+
 local function stepToFrame(self,frameIndex)
     ---@param value UI.Action.Timeline
     for index, value in ipairs(self._timelineMap) do
-        value:stepToFrame(frameIndex)
+        value:stepToFrame(frameIndex,self)
     end
 end
 
 local function emitFrameEndCallFuncs(self,frameIndex)
     local clipEndCalls = self._frameEndCallFuncs[frameIndex]
     if clipEndCalls then
-        for index, value in SafePairs(clipEndCalls) do
+        --for index, value in SafePairs(clipEndCalls) do
             clipEndCalls()
-        end
+        --end
     end
 end
 
@@ -168,6 +194,19 @@ function ActionTimeline:step(delta)
             self:gotoFrameAndPlay(self._startFrame, self._endFrame, self._startFrame, self._loop)
         end
     end
+end
+
+function ActionTimeline:destroy()
+    self._node = nil
+    self._frameEndCallFuncs = nil
+    self._lastFrameListener = nil
+
+    local timelineMap = self._timelineMap
+    self._timelineMap = nil
+    for index, value in ipairs(timelineMap) do
+        value:destroy()
+    end
+    self._animationInfos = nil
 end
 
 UI.Action.ActionTimeline = ActionTimeline

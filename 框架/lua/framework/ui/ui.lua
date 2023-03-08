@@ -38,7 +38,7 @@ function UI.GetMousePos()
 
     local width = japi.DzGetClientWidth()
     local height = japi.DzGetClientHeight()
-    return {x = x / width, y = y / height}
+    return {x = x / width * 0.8, y = 0.6 - (y / height * 0.6)}
 end
 
 ---设置成内部控件

@@ -2,5 +2,9 @@
 ---@param ui UI.Layer 当前加载的ui跟节点
 return function (ui)
     
-    ui:playAction("animation0",true)
+    local loop_play
+    loop_play = function ()
+        ui:playAction("animation0",false,loop_play)
+    end
+    loop_play()
 end

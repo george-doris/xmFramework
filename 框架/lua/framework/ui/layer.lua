@@ -27,7 +27,9 @@ end
 ---播放动画
 ---@param name string 动画名字
 ---@param loop boolean 是否循环
-function UI.Layer:playAction(name,loop)
+---@param fn function|nil 结束回调
+---@return UI.Action.ActionTimeline|nil
+function UI.Layer:playAction(name,loop,fn)
     if self._actionData==nil then
         return
     end
@@ -37,8 +39,11 @@ function UI.Layer:playAction(name,loop)
         actionTimeline = UIActionParser.Load(self,self._actionData)
         self._actionTimeline[name] = actionTimeline
         UI.ActionManager:addAction(actionTimeline)
-        actionTimeline:play(name,loop or false)
     end
+    actionTimeline:setLastFrameCallFunc(fn)
+    actionTimeline:play(name,loop)
+
+    return actionTimeline
 end
 
 ---停止动画
@@ -50,6 +55,15 @@ function UI.Layer:stopAction(name)
         return
     end
     actionTimeline:stop()
+end
+
+function UI.Layer:stopAllAction()
+    ---@type UI.Action.ActionTimeline
+    local actionTimeline = self._actionTimeline
+    self._actionTimeline = {}
+    for index, value in SafePairs(actionTimeline) do
+        value:stop()
+    end
 end
 
 ---释放

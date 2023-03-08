@@ -5,7 +5,7 @@ require "framework.ui.action.scale_frame"
 require "framework.ui.action.texture_frame"
 require "framework.ui.action.visible_frame"
 require "framework.ui.action.alpha_frame"
-
+require "framework.ui.action.frame_event"
 
 ---@class UIActionParser
 local UIActionParser = {}
@@ -89,12 +89,28 @@ local function Alpha(root,node)
     return timeline
 end
 
+---设置帧事件
+local function FrameEvent(root,node)
+    local timeline = UI.Action.Timeline.new()
+
+    for _, value in ipairs(root.frames) do
+        local frame = UI.Action.FrameEvent.new()
+        frame:setNode(node)
+        frame:setFrameIndex(value.frameIndex)
+        frame:setTween(value.tween)
+        frame:setEvent(value.value)
+        timeline:addFrame(frame)
+    end
+    return timeline
+end
+
 local _factory = {
     Position = Position,
     Scale = Scale,
     FileData = FileData,
     VisibleForFrame = VisibleForFrame,
     Alpha = Alpha,
+    FrameEvent = FrameEvent,
 }
 
 ---comment
@@ -123,6 +139,7 @@ function UIActionParser.Load(ui,root)
     local actionTimeline = UI.Action.ActionTimeline.new()
     actionTimeline:setDuration(animation.duration)
     actionTimeline:setTimeSpeed(animation.speed)
+    actionTimeline:setNode(ui)
 
     if animation.timeline then
         for index, value in ipairs(animation.timeline) do

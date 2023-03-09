@@ -68,9 +68,9 @@ end
 ---设置缩放
 ---@param scale number 0-1
 function UI.Panel:setScale(scale)
-    if NumberEqual(self._scale,scale) then
-        return
-    end
+    -- if NumberEqual(self._scale,scale) then
+    --     return
+    -- end
     UI.UIBase.setScale(self,scale)
     self._background._scale = 0.0000001
     self._background:setScale(1)

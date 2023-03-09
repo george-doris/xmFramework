@@ -119,6 +119,9 @@ local function LoadingBarObjectData(root,parent)
     setBaseProperty(ui,root)
     setWidgetProperty(ui,root)
    
+    ui:setDirection(root.direction)
+    ui:setProgressType(root.progressType)
+
     ui:setTexture(root.image)
     ui:setValue(root.progress/100)
     return ui

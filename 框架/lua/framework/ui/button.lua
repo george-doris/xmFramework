@@ -186,9 +186,9 @@ end
 ---设置缩放
 ---@param scale number 0-1
 function UI.Button:setScale(scale)
-    if NumberEqual(self._scale,scale) then
-        return
-    end
+    -- if NumberEqual(self._scale,scale) then
+    --     return
+    -- end
     UI.Backdrop.setScale(self,scale)
     self._textUI._scale = 0.0000001
     self._textUI:setScale(1)

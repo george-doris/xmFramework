@@ -191,12 +191,8 @@ function UI.UIBase:getAlpha()
     return self._alpha
 end
 
----设置缩放
----@param scale number 0-1
-function UI.UIBase:setScale(scale)
-    if NumberEqual(self._scale,scale) then
-        return
-    end
+--强行更新缩放比
+function UI.UIBase:updateScale(scale)
     self._scale = scale
     self._worldScale = nil
     self._updateScale = true
@@ -215,6 +211,15 @@ function UI.UIBase:setScale(scale)
         value._scale = 0.0000001
         value:setScale(scale)
     end
+end
+
+---设置缩放
+---@param scale number 0-1
+function UI.UIBase:setScale(scale)
+    -- if NumberEqual(self._scale,scale) then
+    --     return
+    -- end
+    self:updateScale(scale)
 end
 
 ---获得缩放比

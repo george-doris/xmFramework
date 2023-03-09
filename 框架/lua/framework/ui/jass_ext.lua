@@ -381,6 +381,15 @@ code["XMUIGetText"] = function(frameid)
     return ui:getText()
 end
 
+code["XMUIAutoSize"] = function(frameid,width)
+    ---@type UI.Text
+    local ui = UI.findFromFrameID(frameid)
+    if ui==nil then
+        return 0
+    end
+    return ui:AutoSize(width)
+end
+
 code["XMUISetFont"] = function(frameid,v)
     ---@type UI.Text
     local ui = UI.findFromFrameID(frameid)
@@ -599,4 +608,13 @@ code["XMUIClearValueCallback"] = function(frameid)
         return 0
     end
     return ui:setCallback_OnValue()
+end
+
+code["XMUIDestroy"] = function(frameid)
+    ---@type UI.UIBase
+    local ui = UI.findFromFrameID(frameid)
+    if ui==nil then
+        return 0
+    end
+    ui:destroy()
 end

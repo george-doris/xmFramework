@@ -137,9 +137,9 @@ end
 ---设置缩放
 ---@param scale number 0-1
 function UI.Text:setScale(scale)
-    if NumberEqual(self._scale,scale) then
-        return
-    end
+    -- if NumberEqual(self._scale,scale) then
+    --     return
+    -- end
     UI.UIBase.setScale(self,scale)
     _updateFont(self)
     if self._shadow==nil then return end

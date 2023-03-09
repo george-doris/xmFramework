@@ -236,9 +236,9 @@ end
 ---设置缩放
 ---@param scale number 0-1
 function UI.CheckBox:setScale(scale)
-    if NumberEqual(self._scale,scale) then
-        return
-    end
+    -- if NumberEqual(self._scale,scale) then
+    --     return
+    -- end
     UI.Backdrop.setScale(self,scale)
     self._node._scale = 0.0000001
     self._node:setScale(1)

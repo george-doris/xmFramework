@@ -497,6 +497,14 @@ function UI.UIBase:removeAllChild()
     end
 end
 
+---枚举处理一级子界面
+---@param fn function 函数
+function UI.UIBase:EnumChild(fn)
+    for index, value in ipairs(self._children) do
+        fn(value)
+    end
+end
+
 ---释放所有监听事件
 local function _unregisterAllEvent(self)
     local event = self._event

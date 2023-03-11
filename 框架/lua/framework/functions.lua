@@ -22,20 +22,20 @@ function Dump(value, desciption, nesting)
         end
         if type(value) ~= "table" then
             result[#result + 1] = string.format("%s%s%s = %s", indent,
-                                                dump_value_(desciption), spc,
-                                                dump_value_(value))
+                dump_value_(desciption), spc,
+                dump_value_(value))
         elseif lookupTable[tostring(value)] then
             result[#result + 1] = string.format("%s%s%s = *REF*", indent,
-                                                dump_value_(desciption), spc)
+                dump_value_(desciption), spc)
         else
             lookupTable[tostring(value)] = true
             if nest > nesting then
                 result[#result + 1] = string.format("%s%s = *MAX NESTING*",
-                                                    indent,
-                                                    dump_value_(desciption))
+                    indent,
+                    dump_value_(desciption))
             else
                 result[#result + 1] = string.format("%s%s = {", indent,
-                                                    dump_value_(desciption))
+                    dump_value_(desciption))
                 local indent2 = indent .. "    "
                 local keys = {}
                 local keylen = 0
@@ -69,22 +69,13 @@ end
 
 local setmetatableindex_
 setmetatableindex_ = function(t, index)
-    if type(t) == "userdata" then
-        local peer = tolua.getpeer(t)
-        if not peer then
-            peer = {}
-            tolua.setpeer(t, peer)
-        end
-        setmetatableindex_(peer, index)
-    else
-        local mt = getmetatable(t)
-        if not mt then mt = {} end
-        if not mt.__index then
-            mt.__index = index
-            setmetatable(t, mt)
-        elseif mt.__index ~= index then
-            setmetatableindex_(mt, index)
-        end
+    local mt = getmetatable(t)
+    if not mt then mt = {} end
+    if not mt.__index then
+        mt.__index = index
+        setmetatable(t, mt)
+    elseif mt.__index ~= index then
+        setmetatableindex_(mt, index)
     end
 end
 SetMetatableIndex = setmetatableindex_
@@ -95,9 +86,9 @@ SetMetatableIndex = setmetatableindex_
 ---@param ... any 父类,父类,父类....
 ---@return any 类实例
 function Class(classname, ...)
-    local cls = {__cname = classname}
+    local cls = { __cname = classname }
 
-    local supers = {...}
+    local supers = { ... }
     for _, super in ipairs(supers) do
         local superType = type(super)
         assert(superType == "nil" or superType == "table" or superType == "function",
@@ -128,26 +119,29 @@ function Class(classname, ...)
             end
         else
             error(string.format("class() - create class \"%s\" with invalid super type",
-                        classname), 0)
+                classname), 0)
         end
     end
 
     cls.__index = cls
     if not cls.__supers or #cls.__supers == 1 then
-        setmetatable(cls, {__index = cls.super})
+        setmetatable(cls, { __index = cls.super })
     else
-        setmetatable(cls, {__index = function(_, key)
-            local supers = cls.__supers
-            for i = 1, #supers do
-                local super = supers[i]
-                if super[key] then return super[key] end
+        setmetatable(cls, {
+            __index = function(_, key)
+                local supers = cls.__supers
+                for i = 1, #supers do
+                    local super = supers[i]
+                    if super[key] then return super[key] end
+                end
             end
-        end})
+        })
     end
 
     if not cls.ctor then
         -- add default constructor
-        cls.ctor = function() end
+        cls.ctor = function()
+        end
     end
     cls._new = function(...)
         local instance
@@ -168,7 +162,6 @@ function Class(classname, ...)
 
     return cls
 end
-
 
 function ClassQ()
     local cls = {}
@@ -206,13 +199,7 @@ function IsKindOf(obj, classname)
     local t = type(obj)
     if t ~= "table" and t ~= "userdata" then return false end
 
-    local mt
-    if t == "userdata" then
-        if tolua.iskindof(obj, classname) then return true end
-        mt = getmetatable(tolua.getpeer(obj))
-    else
-        mt = getmetatable(obj)
-    end
+    local mt= getmetatable(obj)
     if mt then
         return iskindof_(mt, classname)
     end
@@ -248,21 +235,21 @@ function table.clone(object)
 end
 
 -- function table.clone(object)
---     local lookup_table = {}  
---     local function _copy(object)  
---         if type(object) ~= "table" then  
---             return object  
---         elseif lookup_table[object] then  
---             return lookup_table[object]  
---         end  
---         local newObject = {}  
---         lookup_table[object] = newObject  
---         for key, value in SafePairs(object) do  
---             newObject[_copy(key)] = _copy(value)  
---         end  
---         return setmetatable(newObject, getmetatable(object))  
---     end  
---     return _copy(object)    
+--     local lookup_table = {}
+--     local function _copy(object)
+--         if type(object) ~= "table" then
+--             return object
+--         elseif lookup_table[object] then
+--             return lookup_table[object]
+--         end
+--         local newObject = {}
+--         lookup_table[object] = newObject
+--         for key, value in SafePairs(object) do
+--             newObject[_copy(key)] = _copy(value)
+--         end
+--         return setmetatable(newObject, getmetatable(object))
+--     end
+--     return _copy(object)
 -- end
 
 function table.merge(dest, src) for k, v in SafePairs(src) do dest[k] = v end end
@@ -373,7 +360,7 @@ function table.read_only(inputTable)
                     __index = tbl,
                     __newindex = function(t, k, v)
                         error("error write to a read-only table with key = " ..
-                                  tostring(k))
+                            tostring(k))
                     end,
                     __pairs = function(t) return SafePairs(tbl) end,
                     -- __ipairs = function (t) return ipairs(tbl) end, 5.3版本不需要此方法
@@ -413,7 +400,7 @@ function string.utf8len(input)
     local len = string.len(input)
     local left = len
     local cnt = 0
-    local arr = {0, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc}
+    local arr = { 0, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc }
     while left ~= 0 do
         local tmp = string.byte(input, -left)
         local i = #arr
@@ -510,6 +497,6 @@ function UnSerialize(lua)
     return func()
 end
 
-function NumberEqual(a,b)
-    return math.abs(a-b)<0.0000001
+function NumberEqual(a, b)
+    return math.abs(a - b) < 0.0000001
 end

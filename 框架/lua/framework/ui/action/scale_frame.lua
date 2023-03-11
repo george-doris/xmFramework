@@ -48,7 +48,7 @@ function ScaleFrame:onEnter(nextFrame,currentFrameIndex)
     if self._node==nil then
         return
     end
-    self._node:setScale(self._scaleX);
+    self._node:setScale(self._scaleX)
 
     if self._tween then
         self._betweenScaleX = nextFrame._scaleX - self._scaleX
@@ -59,11 +59,11 @@ end
 function ScaleFrame:onApply(percent)
     --if ((self._node) and (self._betweenScaleX ~= 0 or self._betweenScaleY ~= 0)) then
     if ((self._node) and (self._betweenScaleX ~= 0 )) then
-        local scaleX = self._scaleX + self._betweenScaleX * percent;
-        --local scaleY = self._scaleY + self._betweenScaleY * percent;
+        local scaleX = self._scaleX + self._betweenScaleX * percent
+        --local scaleY = self._scaleY + self._betweenScaleY * percent
         
-        self._node:setScale(scaleX);
-        --_node->setScaleY(scaleY);
+        self._node:setScale(scaleX)
+        --_node->setScaleY(scaleY)
     end
 end
 

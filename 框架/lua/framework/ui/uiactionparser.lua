@@ -1,6 +1,7 @@
 require "framework.ui.action.action_timeline"
 require "framework.ui.action.timeline"
 require "framework.ui.action.position_frame"
+require "framework.ui.action.size_frame"
 require "framework.ui.action.scale_frame"
 require "framework.ui.action.texture_frame"
 require "framework.ui.action.visible_frame"
@@ -22,6 +23,23 @@ local function Position(root, node)
         frame:setTweenType(value.easingData)
         frame:setX(value.x)
         frame:setY(value.y)
+        timeline:addFrame(frame)
+    end
+    return timeline
+end
+
+---设置大小动画
+local function Size(root, node)
+    local timeline = UI.Action.Timeline.new()
+
+    for _, value in ipairs(root.frames) do
+        local frame = UI.Action.SizeFrame.new()
+        frame:setNode(node)
+        frame:setFrameIndex(value.frameIndex)
+        frame:setTween(value.tween)
+        frame:setTweenType(value.easingData)
+        frame:setWidth(value.x)
+        frame:setHeight(value.y)
         timeline:addFrame(frame)
     end
     return timeline
@@ -106,6 +124,7 @@ end
 
 local _factory = {
     Position = Position,
+    Size = Size,
     Scale = Scale,
     FileData = FileData,
     VisibleForFrame = VisibleForFrame,

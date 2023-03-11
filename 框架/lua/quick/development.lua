@@ -20,8 +20,9 @@ function Development.SetResourcePath()
     
     --内置
     local fileUtils = cc.FileUtils:getInstance()
+    --资源跟目录
     fileUtils:setDefaultResourceRootPath(path)
-    --添加资源目录
+    --资源下级目录
     fileUtils:addSearchPath("map/map")
     fileUtils:addSearchPath("map/resource")
 end

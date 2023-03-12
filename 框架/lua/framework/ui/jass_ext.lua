@@ -37,7 +37,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[查找下级界面]传入参数不是xm界面,传入handle为"..frameid)
         end
         local names = string.split(name, ",")
         for _, n in ipairs(names) do
@@ -53,7 +53,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[所有下级界面并运行触发器]传入参数不是xm界面,传入handle为"..frameid)
         end
         ui:EnumChild(function(cui)
             _global_ui = cui
@@ -62,11 +62,24 @@ if code ~= nil then
         end)
     end
 
+    code["XMUIEnumChildCode"] = function(frameid, c)
+        ---@type UI.UIBase
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[所有下级界面并做动作]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        ui:EnumChild(function(cui)
+            _global_ui = cui
+            c()
+            _global_ui = nil
+        end)
+    end
+
     code["XMUIPlayAction"] = function(frameid, name, loop, trig)
         ---@type UI.Layer
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[播放动画]传入参数不是xm界面,传入handle为"..frameid)
         end
         ui:playAction(name, loop, function()
             _global_ui = ui
@@ -75,11 +88,24 @@ if code ~= nil then
         end)
     end
 
+    code["XMUIPlayActionCode"] = function(frameid, name, loop, c)
+        ---@type UI.Layer
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[播放动画,完成后做动作]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        ui:playAction(name, loop, function()
+            _global_ui = ui
+            c()
+            _global_ui = nil
+        end)
+    end
+
     code["XMUIStopAction"] = function(frameid, name)
         ---@type UI.Layer
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[停止动画]传入参数不是xm界面,传入handle为"..frameid)
         end
         ui:stopAction(name)
     end
@@ -95,7 +121,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[鼠标事件]传入参数不是xm界面,传入handle为"..frameid)
         end
         if e == UI.MouseEvent.MOUSE_CLICK then
             ui:SetCallback_MouseClick(function()
@@ -154,11 +180,74 @@ if code ~= nil then
         end
     end
 
+    code["XMUISetMouseEventCode"] = function(frameid, e, c)
+        ---@type UI.UIBase
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[鼠标事件做动作]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        if e == UI.MouseEvent.MOUSE_CLICK then
+            ui:SetCallback_MouseClick(function()
+                _global_ui = ui
+                c()
+                _global_ui = nil
+            end)
+        elseif e == UI.MouseEvent.MOUSE_ENTER then
+            ui:SetCallback_MouseEnter(function()
+                _global_ui = ui
+                c()
+                _global_ui = nil
+            end)
+        elseif e == UI.MouseEvent.MOUSE_LEAVE then
+            ui:SetCallback_MouseLeave(function()
+                _global_ui = ui
+                c()
+                _global_ui = nil
+            end)
+        elseif e == UI.MouseEvent.MOUSE_WHEEL then
+            ui:SetCallback_MouseWheel(function()
+                _global_ui = ui
+                c()
+                _global_ui = nil
+            end)
+        elseif e == UI.MouseEvent.MOUSE_MOVE then
+            ui:SetCallback_MouseMove(function()
+                _global_ui = ui
+                c()
+                _global_ui = nil
+            end)
+        elseif e == UI.MouseEvent.MOUSE_LEFT_DOWN then
+            ui:SetCallback_MouseLeftDown(function()
+                _global_ui = ui
+                c()
+                _global_ui = nil
+            end)
+        elseif e == UI.MouseEvent.MOUSE_LEFT_UP then
+            ui:SetCallback_MouseLeftUp(function()
+                _global_ui = ui
+                c()
+                _global_ui = nil
+            end)
+        elseif e == UI.MouseEvent.MOUSE_RIGHT_DOWN then
+            ui:SetCallback_MouseRightDown(function()
+                _global_ui = ui
+                c()
+                _global_ui = nil
+            end)
+        elseif e == UI.MouseEvent.MOUSE_RIGHT_UP then
+            ui:SetCallback_MouseRightUp(function()
+                _global_ui = ui
+                c()
+                _global_ui = nil
+            end)
+        end
+    end
+
     code["XMUIClearMouseEvent"] = function(frameid, e)
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[清除鼠标事件]传入参数不是xm界面,传入handle为"..frameid)
         end
         if e == UI.MouseEvent.MOUSE_CLICK then
             ui:SetCallback_MouseClick()
@@ -185,7 +274,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return ""
+            error("调用[获得界面名字]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getName()
     end
@@ -194,7 +283,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return ""
+            error("调用[获得界面标记]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getTag()
     end
@@ -203,7 +292,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return ""
+            error("调用[设置界面大小]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setSize(width, height)
     end
@@ -212,7 +301,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面宽度]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getWidth()
     end
@@ -221,7 +310,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面高度]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getHeight()
     end
@@ -230,7 +319,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面透明度]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setAlpha(v)
     end
@@ -239,7 +328,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面透明度]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getAlpha()
     end
@@ -248,7 +337,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面缩放]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setScale(v)
     end
@@ -257,7 +346,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面缩放]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getScale()
     end
@@ -266,7 +355,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面启用/禁用]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setEnable(v)
     end
@@ -275,7 +364,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面启用/禁用]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getScale()
     end
@@ -284,7 +373,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面显示/隐藏]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setVisible(v)
     end
@@ -293,7 +382,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面显示/隐藏]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:isVisible()
     end
@@ -302,7 +391,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面位置]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setPosition(x, y)
     end
@@ -311,7 +400,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面x]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getPosition().x
     end
@@ -320,7 +409,7 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面y]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getPosition().y
     end
@@ -329,7 +418,7 @@ if code ~= nil then
         ---@type UI.Backdrop
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setTexture(v)
     end
@@ -338,7 +427,7 @@ if code ~= nil then
         ---@type UI.Backdrop
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getTexture()
     end
@@ -347,7 +436,7 @@ if code ~= nil then
         ---@type UI.Button
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面普通状态图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setNormalImage(v)
     end
@@ -356,7 +445,7 @@ if code ~= nil then
         ---@type UI.Button
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面普通状态图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getNormalImage()
     end
@@ -365,7 +454,7 @@ if code ~= nil then
         ---@type UI.Button
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面按下状态图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setPressedImage(v)
     end
@@ -374,7 +463,7 @@ if code ~= nil then
         ---@type UI.Button
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面按下状态图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getPressedImage()
     end
@@ -383,7 +472,7 @@ if code ~= nil then
         ---@type UI.Button
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面禁用状态图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setDisableImage(v)
     end
@@ -392,16 +481,93 @@ if code ~= nil then
         ---@type UI.Button
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面禁用状态图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getDisableImage()
+    end
+
+    code["XMUISetButtonStateImage"] = function(frameid, state,v)
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[设置按钮状态图片]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        if IsKindOf(ui,"Button") then
+            ---@type UI.Button
+            local cui = ui
+            if state==0 then
+                return cui:setNormalImage(v)
+            elseif state==1 then
+                return cui:setPressedImage(v)
+            elseif state==2 then
+                return cui:setDisableImage(v)
+            end
+        elseif IsKindOf(ui,"CheckBox") then
+            ---@type UI.CheckBox
+            local cui = ui
+            if state==0 then
+                return cui:setNormalImage(v)
+            elseif state==1 then
+                return cui:setPressedImage(v)
+            elseif state==2 then
+                return cui:setDisableImage(v)
+            end
+        elseif IsKindOf(ui,"Slider") then
+            ---@type UI.Slider
+            local cui = ui
+            if state==0 then
+                return cui:setButtonNormal(v)
+            elseif state==1 then
+                return cui:setButtonPressed(v)
+            elseif state==2 then
+                return cui:setButtonDisabled(v)
+            end
+        end
+    end
+
+    code["XMUIGetButtonStateImage"] = function(frameid,state)
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[获得按钮状态图片]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        if IsKindOf(ui,"Button") then
+            ---@type UI.Button
+            local cui = ui
+            if state==0 then
+                return cui:getNormalImage()
+            elseif state==1 then
+                return cui:getPressedImage()
+            elseif state==2 then
+                return cui:getDisableImage()
+            end
+        elseif IsKindOf(ui,"CheckBox") then
+            ---@type UI.CheckBox
+            local cui = ui
+            if state==0 then
+                return cui:getNormalImage()
+            elseif state==1 then
+                return cui:getPressedImage()
+            elseif state==2 then
+                return cui:getDisableImage()
+            end
+        elseif IsKindOf(ui,"Slider") then
+            ---@type UI.Slider
+            local cui = ui
+            if state==0 then
+                return cui:getButtonNormal()
+            elseif state==1 then
+                return cui:getButtonPressed()
+            elseif state==2 then
+                return cui:getButtonDisabled()
+            end
+        end
+        return ""
     end
 
     code["XMUISetText"] = function(frameid, v)
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面文字]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setText(v)
     end
@@ -410,7 +576,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面文字]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getText()
     end
@@ -419,7 +585,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[根据文本内容自动调整大小]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:AutoSize(width)
     end
@@ -428,7 +594,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面字体]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setFont(v)
     end
@@ -437,7 +603,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面字体]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getFont()
     end
@@ -446,7 +612,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面字体大小]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setFontSize(v)
     end
@@ -455,7 +621,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面字体大小]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getFontSize()
     end
@@ -464,7 +630,7 @@ if code ~= nil then
         ---@type UI.CheckBox
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置复选框选中图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setNodeNormalImage(v)
     end
@@ -473,7 +639,7 @@ if code ~= nil then
         ---@type UI.CheckBox
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得复选框选中图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getNodeNormalImage()
     end
@@ -482,7 +648,7 @@ if code ~= nil then
         ---@type UI.CheckBox
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置复选框选中状态]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setCheckState(v)
     end
@@ -491,7 +657,7 @@ if code ~= nil then
         ---@type UI.CheckBox
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得复选框选中状态]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getCheckState()
     end
@@ -500,7 +666,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面字体样式]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setFontStyle(v)
     end
@@ -509,7 +675,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面字体样式]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getFontStyle()
     end
@@ -518,7 +684,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面文字对齐方式]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setTextAlignment(v)
     end
@@ -527,7 +693,7 @@ if code ~= nil then
         ---@type UI.Text
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面文字对齐方式]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getTextAlignment()
     end
@@ -536,7 +702,7 @@ if code ~= nil then
         ---@type UI.Slider
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置界面值]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setValue(v)
     end
@@ -545,7 +711,7 @@ if code ~= nil then
         ---@type UI.Slider
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[获得界面值]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getValue()
     end
@@ -554,7 +720,7 @@ if code ~= nil then
         ---@type UI.Slider
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置按钮状态图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setProgressBarImage(v)
     end
@@ -563,70 +729,16 @@ if code ~= nil then
         ---@type UI.Slider
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置按钮状态图片]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:getProgressBarImage()
-    end
-
-    code["XMUISetButtonDisabled"] = function(frameid, v)
-        ---@type UI.Slider
-        local ui = UI.findFromFrameID(frameid)
-        if ui == nil then
-            return 0
-        end
-        return ui:setButtonDisabled(v)
-    end
-
-    code["XMUIGetButtonDisabled"] = function(frameid)
-        ---@type UI.Slider
-        local ui = UI.findFromFrameID(frameid)
-        if ui == nil then
-            return 0
-        end
-        return ui:getButtonDisabled()
-    end
-
-    code["XMUISetButtonNormal"] = function(frameid, v)
-        ---@type UI.Slider
-        local ui = UI.findFromFrameID(frameid)
-        if ui == nil then
-            return 0
-        end
-        return ui:setButtonNormal(v)
-    end
-
-    code["XMUIGetButtonNormal"] = function(frameid)
-        ---@type UI.Slider
-        local ui = UI.findFromFrameID(frameid)
-        if ui == nil then
-            return 0
-        end
-        return ui:getButtonNormal()
-    end
-
-    code["XMUISetButtonPressed"] = function(frameid, v)
-        ---@type UI.Slider
-        local ui = UI.findFromFrameID(frameid)
-        if ui == nil then
-            return 0
-        end
-        return ui:setButtonPressed(v)
-    end
-
-    code["XMUIGetButtonPressed"] = function(frameid)
-        ---@type UI.Slider
-        local ui = UI.findFromFrameID(frameid)
-        if ui == nil then
-            return 0
-        end
-        return ui:getButtonPressed()
     end
 
     code["XMUISetValueCallback"] = function(frameid, trig)
         ---@type UI.Slider
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[设置滑动条值改变运行触发]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setCallback_OnValue(function()
             _global_ui = ui
@@ -635,11 +747,24 @@ if code ~= nil then
         end)
     end
 
+    code["XMUISetValueCallbackCode"] = function(frameid, c)
+        ---@type UI.Slider
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[设置滑动条值改变时做动作]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        return ui:setCallback_OnValue(function()
+            _global_ui = ui
+            c()
+            _global_ui = nil
+        end)
+    end
+
     code["XMUIClearValueCallback"] = function(frameid)
         ---@type UI.Slider
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[清除界面值改变运行触发]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setCallback_OnValue()
     end
@@ -648,9 +773,13 @@ if code ~= nil then
         ---@type UI.UIBase
         local ui = UI.findFromFrameID(frameid)
         if ui == nil then
-            return 0
+            error("调用[释放界面]传入参数不是xm界面,传入handle为"..frameid)
         end
         ui:destroy()
+    end
+
+    code["XMUIDestroyAll"] = function()
+        UI.GameUI:removeAllChild()
     end
 
     code["XMUIUpdateCallback"] = function(tag, trig)

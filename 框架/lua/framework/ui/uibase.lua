@@ -13,7 +13,7 @@ UI.UIBase = Class("UIBase")
 function UI.UIBase:_addChild(child)
     local name = child:getName()
     if self._children[name] ~= nil then
-        print("set parent:parent ~= nil :" .. name)
+        print("[警告]"..self:getName().."添加界面"..name..",但之前存在相同名字界面")
         print(debug.traceback())
     end
     self._children[name] = child

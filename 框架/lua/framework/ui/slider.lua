@@ -21,6 +21,35 @@ end
 local function _mouseUp(self)
     self._sliderState = 0
 end
+
+local function _updateProgressBar(self)
+    self._updateProgressBar = true
+    UI.AddUpdate(function ()
+        if self._updateProgressBar then
+            self._updateProgressBar = false
+            if self._direction==UI.Direction.HORIZONTAL then
+                self._slider:setPosition(self._width*self._value-self._width/2, 0)
+            else
+                self._slider:setPosition(0, self._height/2-self._height*self._value)
+            end
+            self._progressBar:setValue(self._value)
+        end
+    end)
+end
+
+local function _setValue(self,value)
+    if self._value ==value then
+        return
+    end
+    if value<0 then
+        value = 0
+    elseif value>1 then
+        value = 1
+    end
+    self._value = value
+    _updateProgressBar(self)
+end
+
 local function _mouseMove(self)
     if self._sliderState == 1 then
         local pos = UI.GetMousePos()
@@ -43,10 +72,16 @@ local function _mouseMove(self)
         if self._value ==value then
             return
         end
-        self:setValue(value)
+        _setValue(self,value)
         if self._onValueCallback then
             self._onValueCallback(self,value)
         end
+    end
+end
+
+local function _mouseWheel(self)
+    if self._mouseWheelEvent then
+        self._mouseWheelEvent(self)
     end
 end
 
@@ -73,8 +108,11 @@ function UI.Slider:ctor(name, parent)
     self._mouse_pos = nil
     self._value = 0
     self._factor = 0
+    self._mouseWheelEvent = nil
     self._direction = UI.Direction.HORIZONTAL
     self._onValueCallback = nil
+
+    UI.Backdrop.SetCallback_MouseWheel(self,function () _mouseWheel(self) end)
 
     local progressBar = UI.LoadingBar.new("_PROGRESSBAR",self)
     UI.Inner(progressBar)
@@ -87,28 +125,14 @@ function UI.Slider:ctor(name, parent)
     slider:SetCallback_MouseLeftDown(function () _mouseDown(self) end)
     slider:SetCallback_MouseLeftUp(function () _mouseUp(self) end )
     slider:SetCallback_MouseMove(function () _mouseMove(self) end )
+    slider:SetCallback_MouseWheel(function () _mouseWheel(self) end)
     slider:setEnable(true)
     slider._parentAnchorType = UI.AnchorType.CENTET
     slider:setAnchorType(UI.AnchorType.CENTET)
     self._slider = slider
 
-    self:setValue(0)
+    _setValue(self,0)
     --_calc_slider_region(self)
-end
-
-local function _updateProgressBar(self)
-    self._updateProgressBar = true
-    UI.AddUpdate(function ()
-        if self._updateProgressBar then
-            self._updateProgressBar = false
-            if self._direction==UI.Direction.HORIZONTAL then
-                self._slider:setPosition(self._width*self._value-self._width/2, 0)
-            else
-                self._slider:setPosition(0, self._height/2-self._height*self._value)
-            end
-            self._progressBar:setValue(self._value)
-        end
-    end)
 end
 
 local function _updateSize(self)
@@ -132,6 +156,11 @@ local function _updateSize(self)
         end
     end)
     _updateProgressBar(self)
+end
+
+---鼠标齿轮消息回调
+function UI.Slider:SetCallback_MouseWheel(fn)
+    self._mouseWheelEvent = fn
 end
 
 ---设置大小
@@ -162,16 +191,10 @@ end
 ---设置值
 ---@param value number 0-100
 function UI.Slider:setValue(value)
-    if self._value ==value then
-        return
+    _setValue(self,value)
+    if self._onValueCallback then
+        self._onValueCallback(self,value)
     end
-    if value<0 then
-        value = 0
-    elseif value>1 then
-        value = 1
-    end
-    self._value = value
-    _updateProgressBar(self)
 end
 
 ---获取值

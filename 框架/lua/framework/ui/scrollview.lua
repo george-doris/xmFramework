@@ -10,31 +10,31 @@ UI.ScrollView = Class("ScrollView", UI.Panel)
 ---@param parent UI.UIBase
 ---@param isClip boolean 是否裁剪
 ---@return UI.ScrollView
-function UI.ScrollView.new(name,parent,isClip)
-    return UI.ScrollView._new(name,parent,isClip)
+function UI.ScrollView.new(name, parent, isClip)
+    return UI.ScrollView._new(name, parent, isClip)
 end
 
 ---构造函数
 ---@param name string 名字
 ---@param parent UI.UIBase 父控件
-function UI.ScrollView:ctor(name, parent,isClip)
-    UI.Panel.ctor(self,name,parent,isClip)
+function UI.ScrollView:ctor(name, parent, isClip)
+    UI.Panel.ctor(self, name, parent, isClip)
 
     self._verticalScrollbar = nil
     self._horizontalScrollbar = nil
 
-    self._innerSize = {width=0,height=0}
+    self._innerSize = { width = 0, height = 0 }
 
-    local inner = UI.Panel.new("_INNER",self,false)
+    local inner = UI.Panel.new("_INNER", self, false)
     UI.Inner(inner)
     inner._parentAnchorType = UI.AnchorType.LEFT_TOP
     inner:setAnchorType(UI.AnchorType.LEFT_TOP)
-    inner:setPosition(0,0)
-    inner:setSize(0.0000001,0.0000001)
+    inner:setPosition(0, 0)
+    inner:setSize(0.0000001, 0.0000001)
     self._inner = inner
 end
 
-function UI.ScrollView:setInnerSize(width,height)
+function UI.ScrollView:setInnerSize(width, height)
     self._innerSize.width = width
     self._innerSize.height = height
 end
@@ -43,51 +43,51 @@ end
 ---@param child UI.UIBase UI
 function UI.ScrollView:_addChild(child)
     local name = child:getName()
-    if name=="[VerticalScrollbar]" then
+    if name == "[VerticalScrollbar]" then
         --垂直滚动条
         --self:setVerticalScrollbar(child)
         return
     end
-    if name=="[HorizontalScrollbar]" then
+    if name == "[HorizontalScrollbar]" then
         --垂直滚动条
         --self:setHorizontalScrollbar(child)
         return
     end
     if self._children[name] ~= nil then
-        print("set parent:parent ~= nil :" .. name)
+        print("[警告]" .. self:getName() .. "添加界面" .. name .. ",但之前存在相同名字界面")
         print(debug.traceback())
     end
     self._children[name] = child
     --添加顺序序列
-    table.insert(self._children,child)
+    table.insert(self._children, child)
 
     if self._inner then
         local inner = self._inner
-        rawset(child,"getParentFrameID",function (self)
+        rawset(child, "getParentFrameID", function(self)
             return inner:getFrameID()
         end)
         local innerSize = self._innerSize
         ---转换描点
-        rawset(child,"getParentOffset",function (self)
-            local offset = {x=0,y=0}
-            if self._parentAnchorType==UI.AnchorType.TOP then
-                offset.x = innerSize.width/2
-            elseif self._parentAnchorType==UI.AnchorType.RIGHT_TOP then
+        rawset(child, "getParentOffset", function(self)
+            local offset = { x = 0, y = 0 }
+            if self._parentAnchorType == UI.AnchorType.TOP then
+                offset.x = innerSize.width / 2
+            elseif self._parentAnchorType == UI.AnchorType.RIGHT_TOP then
                 offset.x = innerSize.width
-            elseif self._parentAnchorType==UI.AnchorType.LEFT then
-                offset.y = -innerSize.height/2
-            elseif self._parentAnchorType==UI.AnchorType.CENTET then
-                offset.x = innerSize.width/2
-                offset.y = -innerSize.height/2
-            elseif self._parentAnchorType==UI.AnchorType.RIGHT then
+            elseif self._parentAnchorType == UI.AnchorType.LEFT then
+                offset.y = -innerSize.height / 2
+            elseif self._parentAnchorType == UI.AnchorType.CENTET then
+                offset.x = innerSize.width / 2
+                offset.y = -innerSize.height / 2
+            elseif self._parentAnchorType == UI.AnchorType.RIGHT then
                 offset.x = innerSize.width
-                offset.y = -innerSize.height/2
-            elseif self._parentAnchorType==UI.AnchorType.LEFT_BOTTOM then
+                offset.y = -innerSize.height / 2
+            elseif self._parentAnchorType == UI.AnchorType.LEFT_BOTTOM then
                 offset.y = -innerSize.height
-            elseif self._parentAnchorType==UI.AnchorType.BOTTOM then
-                offset.x = innerSize.width/2
+            elseif self._parentAnchorType == UI.AnchorType.BOTTOM then
+                offset.x = innerSize.width / 2
                 offset.y = -innerSize.height
-            elseif self._parentAnchorType==UI.AnchorType.RIGHT_BOTTOM then
+            elseif self._parentAnchorType == UI.AnchorType.RIGHT_BOTTOM then
                 offset.x = innerSize.width
                 offset.y = -innerSize.height
             end
@@ -99,31 +99,25 @@ end
 ---移除子窗口
 ---@param child UI.UIBase 子窗口
 function UI.ScrollView:_removeChild(child)
-    UI.Panel._removeChild(self,child)
-    rawset(child,"getParentFrameID",nil)
-    rawset(child,"getParentOffset",nil)
+    UI.Panel._removeChild(self, child)
+    rawset(child, "getParentFrameID", nil)
+    rawset(child, "getParentOffset", nil)
 end
 
 ---更新内页位置
 ---@param self UI.ScrollView
 local function _updateInnerPos(self)
-    self._updateInnerPos = true
-    UI.AddUpdate(function ()
-        if self._updateInnerPos then
-            self._updateInnerPos = false
-            local pos = {x=0,y=0}
+    local pos = { x = 0, y = 0 }
 
-            if self._verticalScrollbar then
-                local height = self._innerSize.height-self._height
-                pos.y = self._verticalScrollbar:getValue()*height*self:getWorldScale()
-            end
-            if self._horizontalScrollbar then
-                local width = self._innerSize.width-self._width
-                pos.x = -self._horizontalScrollbar:getValue()*width*self:getWorldScale()
-            end
-            self._inner:setPosition(pos.x,pos.y)
-        end
-    end)
+    if self._verticalScrollbar then
+        local height = self._innerSize.height - self._height
+        pos.y = self._verticalScrollbar:getValue() * height * self:getWorldScale()
+    end
+    if self._horizontalScrollbar then
+        local width = self._innerSize.width - self._width
+        pos.x = -self._horizontalScrollbar:getValue() * width * self:getWorldScale()
+    end
+    self._inner:setPosition(pos.x, pos.y)
 end
 
 ---设置垂直滚动条
@@ -136,7 +130,7 @@ function UI.ScrollView:setVerticalScrollbar(scrollbar)
     if scrollbar then
         self._verticalScrollbar = scrollbar
         scrollbar:setValue(0)
-        scrollbar:setCallback_OnValue(function (s,value)
+        scrollbar:setCallback_OnValue(function(s, value)
             _updateInnerPos(self)
         end)
     end
@@ -152,7 +146,7 @@ function UI.ScrollView:setHorizontalScrollbar(scrollbar)
     if scrollbar then
         self._horizontalScrollbar = scrollbar
         scrollbar:setValue(0)
-        scrollbar:setCallback_OnValue(function (s,value)
+        scrollbar:setCallback_OnValue(function(s, value)
             _updateInnerPos(self)
         end)
     end

@@ -1,11 +1,11 @@
-require "framework.ui.frame"
+require "framework.ui.panel"
 require "framework.ui.action.action_manager"
 local UIActionParser = require "framework.ui.uiactionparser"
 local japi = require "framework.dzapi"
 
----@class UI.Layer:UI.Frame
+---@class UI.Layer:UI.Panel
 ---面板
-UI.Layer = Class("Layer", UI.Frame)
+UI.Layer = Class("Layer", UI.Panel)
 
 ---创建新实例
 ---@return UI.Layer
@@ -17,7 +17,7 @@ end
 ---@param name string 名字
 ---@param parent UI.UIBase 父控件
 function UI.Layer:ctor(name, parent)
-    UI.Frame.ctor(self,name,parent)
+    UI.Panel.ctor(self,name,parent)
     self._actionTimeline = {}
     self._actionData = nil
 
@@ -81,5 +81,5 @@ function UI.Layer:destroy()
     for index, value in SafePairs(actionTimeline) do
         UI.ActionManager:removeAction(value)
     end
-    UI.Frame.destroy(self)
+    UI.Panel.destroy(self)
 end

@@ -5,6 +5,7 @@ local development = require "quick.development"
 if development.isDebug() then
     --加载运行时调试
     require "quick.runtime_init"
+
     ---设置资源目录
     development.SetResourcePath()
 

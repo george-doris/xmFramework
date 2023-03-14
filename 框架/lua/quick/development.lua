@@ -10,6 +10,9 @@ end
 function Development.SetResourcePath()
     --获得lua源码路径,源码路径是带lua目录的
     local path = japi.XMSourcePath()
+    if path=="" then
+        return
+    end
     local fs = require "framework.file_system"
     --规范化路径, "/"换成"\"
     path = fs.canonicalize(path)

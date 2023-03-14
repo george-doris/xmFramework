@@ -13,12 +13,12 @@ UI.UIBase = Class("UIBase")
 function UI.UIBase:_addChild(child)
     local name = child:getName()
     if self._children[name] ~= nil then
-        print("[警告]"..self:getName().."添加界面"..name..",但之前存在相同名字界面")
+        print("[警告]" .. self:getName() .. "添加界面" .. name .. ",但之前存在相同名字界面")
         print(debug.traceback())
     end
     self._children[name] = child
     --添加顺序序列
-    table.insert(self._children,child)
+    table.insert(self._children, child)
 end
 
 ---构造函数
@@ -34,6 +34,10 @@ function UI.UIBase:ctor(name, parent, frameid)
     self._actionTag = nil
     self._anchorType = UI.AnchorType.LEFT_BOTTOM
     self._parentAnchorType = UI.AnchorType.LEFT_BOTTOM
+    self._relativeFrame = nil
+    self._relativeAnchorType = nil
+    self._relativeX = nil
+    self._relativeY = nil
     self._scale = 1
     self._x = 0.0000001
     self._y = 0.0000001
@@ -44,7 +48,7 @@ function UI.UIBase:ctor(name, parent, frameid)
     self._children = {}
     self._event = nil
     self._worldScale = nil
-    UI.register(self,frameid)
+    UI.register(self, frameid)
 
     parent:_addChild(self)
 end
@@ -63,31 +67,43 @@ function UI.UIBase:getName() return self._name end
 ---@param child UI.UIBase 子窗口
 function UI.UIBase:_removeChild(child)
     local name = child:getName()
-    local node =  self._children[name]
+    local node = self._children[name]
     if node then
         self._children[name] = nil
-        table.removebyvalue(self._children,child)
+        table.removebyvalue(self._children, child)
     end
 end
 
 local function _updatePos(self)
     self._updatePos = true
-    UI.AddUpdate(function ()
+    UI.AddUpdate(function()
         if self._updatePos then
             self._updatePos = false
+            if self._relativeFrame~=nil then
+                if self._relativeFrame ==0 then
+                    japi.DzFrameClearAllPoints(self:getFrameID())
+                    japi.DzFrameSetAbsolutePoint(self:getFrameID(), self._anchorType, self._relativeX, self._relativeY)
+                    return
+                else
+                    japi.DzFrameClearAllPoints(self:getFrameID())
+                    japi.DzFrameSetPoint(self:getFrameID(), self._anchorType, self._relativeFrame,
+                        self._relativeAnchorType, self._relativeX, self._relativeY)
+                    return
+                end
+            end
             japi.DzFrameClearAllPoints(self:getFrameID())
-            local x = self._x/self._scale
-            local y = self._y/self._scale
+            local x = self._x / self._scale
+            local y = self._y / self._scale
             --裁剪窗口特殊需求,y不能是0,不然不显示
-            if x==0 then
+            if x == 0 then
                 x = 0.0000001
             end
-            if y==0 then
+            if y == 0 then
                 y = 0.0000001
             end
             local offset = self:getParentOffset()
             japi.DzFrameSetPoint(self:getFrameID(), self._anchorType, self:getParentFrameID(),
-                self._parentAnchorType, x+offset.x, y+offset.y)
+                self._parentAnchorType, x + offset.x, y + offset.y)
         end
     end)
 end
@@ -98,7 +114,7 @@ function UI.UIBase:setParent(parent)
     error("UI设置父类不可用,会造成不可预知的bug")
     self._parent:_removeChild(self)
     self._parent = parent
-    japi.DzFrameSetParent(self:getFrameID(),parent:getFrameID())
+    japi.DzFrameSetParent(self:getFrameID(), parent:getFrameID())
     parent:_addChild(self)
     _updatePos(self)
 end
@@ -107,7 +123,7 @@ end
 ---@return UI.UIBase @父控件
 function UI.UIBase:getParent() return self._parent end
 
-local _offset = {x=0,y=0}
+local _offset = { x = 0, y = 0 }
 function UI.UIBase:getParentOffset()
     return _offset
 end
@@ -115,13 +131,13 @@ end
 ---设置大小
 ---@param width number 宽度
 ---@param height number 高度
-function UI.UIBase:setSize(width,height)
+function UI.UIBase:setSize(width, height)
     if self._width == width and self._height == height then return end
     self._width = width
     self._height = height
-    
+
     self._updateSize = true
-    UI.AddUpdate(function ()
+    UI.AddUpdate(function()
         if self._updateSize then
             self._updateSize = false
             japi.DzFrameSetSize(self:getFrameID(), self._width, self._height)
@@ -135,7 +151,7 @@ end
 ---获得宽高
 ---@return table {width,height}
 function UI.UIBase:getSize()
-    return {width=self._width,height=self._height}
+    return { width = self._width, height = self._height }
 end
 
 ---获得宽度
@@ -168,16 +184,15 @@ function UI.UIBase:setActionTag(tag)
     self._actionTag = tag
 end
 
-
 ---设置透明度
 ---@param alpha integer 透明度0-255
 function UI.UIBase:setAlpha(alpha)
-    if self._alpha==alpha then
+    if self._alpha == alpha then
         return
     end
-    self._alpha=alpha
+    self._alpha = alpha
     self._updateAlpha = true
-    UI.AddUpdate(function ()
+    UI.AddUpdate(function()
         if self._updateAlpha then
             self._updateAlpha = false
             japi.DzFrameSetAlpha(self:getFrameID(), self._alpha)
@@ -196,7 +211,7 @@ function UI.UIBase:updateScale(scale)
     self._scale = scale
     self._worldScale = nil
     self._updateScale = true
-    UI.AddUpdate(function ()
+    UI.AddUpdate(function()
         if self._updateScale then
             self._updateScale = false
             japi.DzFrameSetScale(self:getFrameID(), self:getWorldScale())
@@ -230,11 +245,11 @@ end
 
 ---获得全局缩放比
 function UI.UIBase:getWorldScale()
-    if self._worldScale==nil then
+    if self._worldScale == nil then
         local scale = self._scale
         local node = self:getParent()
         while node do
-            scale = scale*node._scale
+            scale = scale * node._scale
             node = node:getParent()
         end
         self._worldScale = scale
@@ -249,7 +264,7 @@ function UI.UIBase:setEnable(isEnable)
     self._enable = isEnable
 
     self._updateEnable = true
-    UI.AddUpdate(function ()
+    UI.AddUpdate(function()
         if self._updateEnable then
             self._updateEnable = false
             local event = self._event
@@ -261,9 +276,8 @@ end
 ---是否启用
 ---@return boolean
 function UI.UIBase:isEnable()
-    return self._enable 
+    return self._enable
 end
-
 
 ---设置顶点颜色
 ---@param r integer 0-255
@@ -271,7 +285,7 @@ end
 ---@param b integer 0-255
 ---@param a integer 0-255
 function UI.UIBase:setVertexColor(r, g, b, a)
-    japi.DzFrameSetVertexColor(self:getFrameID(), japi.DzGetColor(a,r, g, b))
+    japi.DzFrameSetVertexColor(self:getFrameID(), japi.DzGetColor(a, r, g, b))
 end
 
 ---显示\隐藏
@@ -281,7 +295,7 @@ function UI.UIBase:setVisible(isShow)
     self._visible = isShow
 
     self._updateVisible = true
-    UI.AddUpdate(function ()
+    UI.AddUpdate(function()
         if self._updateVisible then
             self._updateVisible = false
             japi.DzFrameShow(self:getFrameID(), self._visible)
@@ -316,6 +330,57 @@ function UI.UIBase:setPosition(x, y)
     _updatePos(self)
 end
 
+---设置位置
+---@param x number x坐标
+---@param y number y坐标
+function UI.UIBase:setPoint(anchorType, relative_anchorType, x, y)
+    self._anchorType = anchorType
+    self._parentAnchorType = relative_anchorType
+    self._x = x
+    self._y = y
+
+    _updatePos(self)
+end
+
+---设置相对位置
+---@param anchorType integer 锚点
+---@param relativeframe integer 相对窗口
+---@param relativeAnchorType integer 相对锚点
+---@param relativeX number 偏移x
+---@param relativeY number 偏移y
+function UI.UIBase:setRelativePoint(anchorType, relativeframe, relativeAnchorType, relativeX, relativeY)
+    self._anchorType = anchorType
+    self._relativeFrame = relativeframe
+    self._relativeAnchorType = relativeAnchorType
+    self._relativeX = relativeX
+    self._relativeY = relativeY
+
+    _updatePos(self)
+end
+
+---设置绝对位置
+---@param anchorType integer 锚点
+---@param relativeX number 偏移x
+---@param relativeY number 偏移y
+function UI.UIBase:setAbsolutePoint(anchorType, relativeX, relativeY)
+    self._anchorType = anchorType
+    self._relativeFrame = 0
+    self._relativeX = relativeX
+    self._relativeY = relativeY
+
+    _updatePos(self)
+end
+
+---清空锚点
+function UI.UIBase:clearPoint()
+    self._anchorType = nil
+    self._relativeFrame = nil
+    self._relativeX = nil
+    self._relativeY = nil
+
+    _updatePos(self)
+end
+
 function UI.UIBase:getParentFrameID()
     return self:getParent():getFrameID()
 end
@@ -323,7 +388,7 @@ end
 ---获得位置
 ---@return table{x:number|y:number}
 function UI.UIBase:getPosition()
-   return {x=self._x,y=self._y}
+    return { x = self._x, y = self._y }
 end
 
 ---设置优先事件
@@ -336,7 +401,7 @@ end
 ---@param self UI.UIBase
 ---@param eventId UI.MouseEvent 事件id
 ---@param fn function 回调函数
-local function _registerEvent(self,eventId, fn)
+local function _registerEvent(self, eventId, fn)
     local event = self._event
     if event == nil then
         event = { events = {} }
@@ -350,7 +415,7 @@ local function _registerEvent(self,eventId, fn)
         if self._enable == false then
             japi.DzFrameSetEnable(event.frameid, false)
         end
-        UI.register(self,frameid)
+        UI.register(self, frameid)
     end
     if event.events[eventId] == nil then
         event.events[eventId] = fn
@@ -363,7 +428,7 @@ end
 
 ---注销事件
 ---@param eventId UI.MouseEvent 事件id
-local function _unregisterEvent(self,eventId)
+local function _unregisterEvent(self, eventId)
     local event = self._event
     if event.events[eventId] then
         event.events[eventId] = nil
@@ -381,81 +446,81 @@ end
 ---鼠标进入消息回调
 function UI.UIBase:SetCallback_MouseEnter(fn)
     if fn then
-        _registerEvent(self,UI.MouseEvent.MOUSE_ENTER,fn)
+        _registerEvent(self, UI.MouseEvent.MOUSE_ENTER, fn)
     else
-        _unregisterEvent(self,UI.MouseEvent.MOUSE_ENTER)
+        _unregisterEvent(self, UI.MouseEvent.MOUSE_ENTER)
     end
 end
 
 ---鼠标离开消息回调
 function UI.UIBase:SetCallback_MouseLeave(fn)
     if fn then
-        _registerEvent(self,UI.MouseEvent.MOUSE_LEAVE,fn)
+        _registerEvent(self, UI.MouseEvent.MOUSE_LEAVE, fn)
     else
-        _unregisterEvent(self,UI.MouseEvent.MOUSE_LEAVE)
+        _unregisterEvent(self, UI.MouseEvent.MOUSE_LEAVE)
     end
 end
 
 ---鼠标左键按下消息回调
 function UI.UIBase:SetCallback_MouseLeftDown(fn)
     if fn then
-        _registerEvent(self,UI.MouseEvent.MOUSE_LEFT_DOWN,fn)
+        _registerEvent(self, UI.MouseEvent.MOUSE_LEFT_DOWN, fn)
     else
-        _unregisterEvent(self,UI.MouseEvent.MOUSE_LEFT_DOWN)
+        _unregisterEvent(self, UI.MouseEvent.MOUSE_LEFT_DOWN)
     end
 end
 
 ---鼠标左键抬起消息回调
 function UI.UIBase:SetCallback_MouseLeftUp(fn)
     if fn then
-        _registerEvent(self,UI.MouseEvent.MOUSE_LEFT_UP,fn)
+        _registerEvent(self, UI.MouseEvent.MOUSE_LEFT_UP, fn)
     else
-        _unregisterEvent(self,UI.MouseEvent.MOUSE_LEFT_UP)
+        _unregisterEvent(self, UI.MouseEvent.MOUSE_LEFT_UP)
     end
 end
 
 ---鼠标左键按下消息回调
 function UI.UIBase:SetCallback_MouseRightDown(fn)
     if fn then
-        _registerEvent(self,UI.MouseEvent.MOUSE_RIGHT_DOWN,fn)
+        _registerEvent(self, UI.MouseEvent.MOUSE_RIGHT_DOWN, fn)
     else
-        _unregisterEvent(self,UI.MouseEvent.MOUSE_RIGHT_DOWN)
+        _unregisterEvent(self, UI.MouseEvent.MOUSE_RIGHT_DOWN)
     end
 end
 
 ---鼠标左键抬起消息回调
 function UI.UIBase:SetCallback_MouseRightUp(fn)
     if fn then
-        _registerEvent(self,UI.MouseEvent.MOUSE_RIGHT_UP,fn)
+        _registerEvent(self, UI.MouseEvent.MOUSE_RIGHT_UP, fn)
     else
-        _unregisterEvent(self,UI.MouseEvent.MOUSE_RIGHT_UP)
+        _unregisterEvent(self, UI.MouseEvent.MOUSE_RIGHT_UP)
     end
 end
 
 ---鼠标移动消息回调
 function UI.UIBase:SetCallback_MouseMove(fn)
     if fn then
-        _registerEvent(self,UI.MouseEvent.MOUSE_MOVE,fn)
+        _registerEvent(self, UI.MouseEvent.MOUSE_MOVE, fn)
     else
-        _unregisterEvent(self,UI.MouseEvent.MOUSE_MOVE)
+        _unregisterEvent(self, UI.MouseEvent.MOUSE_MOVE)
     end
 end
 
 ---鼠标齿轮消息回调
 function UI.UIBase:SetCallback_MouseWheel(fn)
     if fn then
-        _registerEvent(self,UI.MouseEvent.MOUSE_WHEEL,fn)
+        _registerEvent(self, UI.MouseEvent.MOUSE_WHEEL, fn)
     else
-        _unregisterEvent(self,UI.MouseEvent.MOUSE_WHEEL)
+        _unregisterEvent(self, UI.MouseEvent.MOUSE_WHEEL)
     end
 end
 
 ---鼠标单击消息回调
 function UI.UIBase:SetCallback_MouseClick(fn)
     if fn then
-        _registerEvent(self,UI.MouseEvent.MOUSE_CLICK,fn)
+        _registerEvent(self, UI.MouseEvent.MOUSE_CLICK, fn)
     else
-        _unregisterEvent(self,UI.MouseEvent.MOUSE_CLICK)
+        _unregisterEvent(self, UI.MouseEvent.MOUSE_CLICK)
     end
 end
 
@@ -464,11 +529,11 @@ end
 ---@param name string|table 子窗口名称
 ---@return UI.UIBase|nil
 function UI.UIBase:findChild(name)
-    if type(name)=="table" then
+    if type(name) == "table" then
         local ui = self
         for index, value in ipairs(name) do
             ui = ui:findChild(value)
-            if ui==nil then
+            if ui == nil then
                 return nil
             end
         end
@@ -483,7 +548,7 @@ function UI.UIBase:removeChild(name)
     local child = self._children[name]
     if child then
         self._children[name] = nil
-        table.removebyvalue(self._children,child)
+        table.removebyvalue(self._children, child)
         child:destroy()
     end
 end
@@ -532,7 +597,6 @@ function UI.UIBase:destroy()
         self._frameid = nil
     end
 end
-
 
 local _cur_ui
 local _cur_button

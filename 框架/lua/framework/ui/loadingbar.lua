@@ -18,24 +18,19 @@ end
 
 local function _updateProgressBar(self)
     self._updateProgressBar = true
-    UI.AddUpdate(function()
-        if self._updateProgressBar then
-            self._updateProgressBar = false
-            if self._direction == UI.Direction.HORIZONTAL then
-                local width = self._width * self._value
-                if width <= 0 then
-                    width = 0.0000001
-                end
-                self._clipFrame:setSize(width, self._height)
-            else
-                local height = self._height * self._value
-                if height <= 0 then
-                    height = 0.0000001
-                end
-                self._clipFrame:setSize(self._width, height)
-            end
+    if self._direction == UI.Direction.HORIZONTAL then
+        local width = self._width * self._value
+        if width <= 0 then
+            width = 0.0000001
         end
-    end)
+        self._clipFrame:setSize(width, self._height)
+    else
+        local height = self._height * self._value
+        if height <= 0 then
+            height = 0.0000001
+        end
+        self._clipFrame:setSize(self._width, height)
+    end
 end
 
 local function _mouseDown()
@@ -80,13 +75,13 @@ function UI.LoadingBar:setSize(width, height)
         if self._updateSize then
             self._updateSize = false
             japi.DzFrameSetSize(self:getFrameID(), self._width, self._height)
-            self._progressBar:setSize(self._width, self._height)
 
             --设置事件窗口大小
             local event = self._event
             if event then japi.DzFrameSetSize(event.frameid, self._width, self._height) end
         end
     end)
+    self._progressBar:setSize(self._width, self._height)
     _updateProgressBar(self)
 end
 
@@ -110,17 +105,11 @@ function UI.LoadingBar:setTexture(texture)
         return
     end
     self._progressBar:setTexture(texture, 0)
-    self._updateClipFrame = true
-    UI.AddUpdate(function()
-        if self._updateClipFrame then
-            self._updateClipFrame = false
-            if self._progressBar._texture ~= nil and self._progressBar._texture ~= "" then
-                self._clipFrame:setVisible(true)
-            else
-                self._clipFrame:setVisible(false)
-            end
-        end
-    end)
+    if self._progressBar._texture ~= nil and self._progressBar._texture ~= "" then
+        self._clipFrame:setVisible(true)
+    else
+        self._clipFrame:setVisible(false)
+    end
 end
 
 ---设置材质

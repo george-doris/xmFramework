@@ -10,17 +10,21 @@ require "framework.ui.layer"
 
 function UI.LoadScene(filename, parent, name)
     local f = io.open(filename, "r")
+    if f==nil then
+        error("场景文件不存在:"..filename)
+        return 0
+    end
     local buffer = f:read("a")
     f:close()
     local data = Serialize.unSerialize(buffer)
 
-    local ui = UI.Layer.new(name or data.name,parent or GameUI)
-    UIParser.LoadChildren(data.children,ui)
+    local ui = UI.Layer.new(name or data.name, parent or GameUI)
+    UIParser.LoadChildren(data.children, ui)
     ui:setAnchorType(UI.AnchorType.LEFT_BOTTOM)
-    ui:setPosition(0,0)
-    ui:setSize(0.8,0.6)
+    ui:setPosition(0, 0)
+    ui:setSize(0.8, 0.6)
 
-    local actionData = UI.Action.ActionDataCache:Load(filename,data)
+    local actionData = UI.Action.ActionDataCache:Load(filename, data)
     ui._actionData = actionData
     -- UIActionParser.Load(ui,actionData)
     if data.userData then
@@ -38,7 +42,7 @@ function UI.GetMousePos()
 
     local width = japi.DzGetClientWidth()
     local height = japi.DzGetClientHeight()
-    return {x = x / width * 0.8, y = 0.6 - (y / height * 0.6)}
+    return { x = x / width * 0.8, y = 0.6 - (y / height * 0.6) }
 end
 
 ---设置成内部控件
@@ -46,23 +50,37 @@ end
 function UI.Inner(ui)
     local parent = ui:getParent()
     parent._children[ui:getName()] = nil
-    table.removebyvalue(parent._children,ui)
+    table.removebyvalue(parent._children, ui)
     local frameid = parent:getFrameID()
-    rawset(ui,"getParentFrameID", function (self)
+    rawset(ui, "getParentFrameID", function(self)
         return frameid
     end)
 end
 
 ---更新列表
 local _updateList = {}
-function UI.AddUpdate(fn)
-   --fn() --调试用
-   table.insert(_updateList,fn)
+
+local function ImmMode(fn)
+    fn()
+end
+
+local function DelayMode(fn)
+    table.insert(_updateList, fn)
+end
+
+UI.AddUpdate = DelayMode
+
+function UI.SetMode(mode)
+    if mode == 0 then
+        UI.AddUpdate = DelayMode
+    else
+        UI.AddUpdate = ImmMode
+    end
 end
 
 if Dev.HasXMLib() then
     --内置-异步定时器
-    TimerAsyn.TimerStart(TimerAsyn.CreateTimer(),0.02,true,function ()
+    TimerAsyn.TimerStart(TimerAsyn.CreateTimer(), 0.02, true, function()
         local updateList = _updateList
         _updateList = {}
         for index, value in ipairs(updateList) do
@@ -71,7 +89,7 @@ if Dev.HasXMLib() then
     end)
 else
     --没有内置只能这样了
-    Timer.TimerStart(TimerAsyn.CreateTimer(),0.02,true,function ()
+    Timer.TimerStart(TimerAsyn.CreateTimer(), 0.02, true, function()
         local updateList = _updateList
         _updateList = {}
         for index, value in ipairs(updateList) do

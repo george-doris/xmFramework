@@ -2,5 +2,6 @@ require "framework.functions"
 require "framework.time"
 require "framework.update_callback"
 require "framework.timer"
+require "framework.command"
 
-require "framework.ui.jass_ext"
+require "framework.jass_ext"

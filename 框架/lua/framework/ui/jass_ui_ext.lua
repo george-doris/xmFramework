@@ -15,6 +15,7 @@ end
 if code ~= nil then
     require "framework.ui.layer"
     require "framework.ui.ui"
+    require "framework.ui.tip"
     local japi = require "jass.japi"
     local jass = require "jass.common"
     local UpdateCallback = require "framework.update_callback"
@@ -394,6 +395,33 @@ if code ~= nil then
             error("调用[设置界面位置]传入参数不是xm界面,传入handle为"..frameid)
         end
         return ui:setPosition(x, y)
+    end
+
+    code["XMUISetRelativePoint"] = function(frameid,anchorType, relativeFrame,relativeAnchorType, relativeX, relativeY)
+        ---@type UI.UIBase
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[设置相对位置]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        return ui:setRelativePoint(anchorType, relativeFrame,relativeAnchorType, relativeX, relativeY)
+    end
+
+    code["XMUISetAbsolutePoint"] = function(frameid,anchorType, relativeX, relativeY)
+        ---@type UI.UIBase
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[设置绝对位置]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        return ui:setAbsolutePoint(anchorType, relativeX, relativeY)
+    end
+
+    code["XMUIClearPoint"] = function(frameid)
+        ---@type UI.UIBase
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[清空所有锚点]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        return ui:clearPoint()
     end
 
     code["XMUIGetX"] = function(frameid)
@@ -782,6 +810,10 @@ if code ~= nil then
         UI.GameUI:removeAllChild()
     end
 
+    code["XMUISetMode"] = function(mode)
+        UI.SetMode(mode)
+    end
+
     code["XMUIUpdateCallback"] = function(tag, trig)
         UpdateCallback.AddUpdateCallback(tag, function()
             _executeTrigger(trig)
@@ -790,5 +822,29 @@ if code ~= nil then
 
     code["XMUIClearUpdateCallback"] = function(tag)
         UpdateCallback.RemoveUpdateCallback(tag)
+    end
+
+    code["XMUICreateTip"] = function(name,frameid,filename,template)
+        local ui = UI.TipUI.new(name,UI.findFromFrameID(frameid),filename,template)
+        return ui:getFrameID()
+    end
+
+    code["XMUITipSetPadding"] = function(frameid,left,top,right,bottom)
+        ---@type UI.TipUI
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[提示面板设置边距]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        ui:setPadding(left,top,right,bottom)
+    end
+
+    code["XMUITipAdd"] = function(frameid,name,template,align,br,left,top,right,bottom)
+        ---@type UI.TipUI
+        local ui = UI.findFromFrameID(frameid)
+        if ui == nil then
+            error("调用[提示面板添加]传入参数不是xm界面,传入handle为"..frameid)
+        end
+        local sui = ui:addItem(name,template,align,br,left,top,right,bottom)
+        return sui:getFrameID()
     end
 end
